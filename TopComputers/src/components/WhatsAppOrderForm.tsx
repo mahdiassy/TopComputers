@@ -37,6 +37,7 @@ interface CustomerDetails {
   phoneNumber: string;
   address: string;
   city: string;
+  notes?: string;
 }
 
 interface SavedDetails extends CustomerDetails {
@@ -81,6 +82,7 @@ export default function WhatsAppOrderForm({
     phoneNumber: '',
     address: '',
     city: '',
+    notes: '',
   });
   const [promoCode, setPromoCode] = useState('');
   const [showPromoCode, setShowPromoCode] = useState(false);
@@ -106,6 +108,7 @@ export default function WhatsAppOrderForm({
             phoneNumber: savedDetails.phoneNumber,
             address: savedDetails.address,
             city: savedDetails.city,
+            notes: savedDetails.notes || '',
           });
           const toastId = 'customer-details-loaded';
           try { (toast as any).dismiss?.(toastId); } catch {}
@@ -198,7 +201,7 @@ ${productsList}
 • Phone: ${customerDetails.phoneNumber}
 • Address: ${customerDetails.address}
 • City: ${customerDetails.city}
-
+${customerDetails.notes ? `📝 *Notes:* ${customerDetails.notes}\n` : ''}
 💸 *Payment Method:* ${paymentMethod === 'whish' ? '💳 Whish Payment' : '💵 Cash on Delivery'}
 ${promoCode ? `🎟️ *Promo Code:* ${promoCode}` : ''}
 
@@ -221,6 +224,7 @@ _Order placed via TopComputers website_
 • Phone: ${customerDetails.phoneNumber}
 • Address: ${customerDetails.address}
 • City: ${customerDetails.city}
+${customerDetails.notes ? `📝 *Notes:* ${customerDetails.notes}` : ''}
 
 💸 *Payment Method:* ${paymentMethod === 'whish' ? '💳 Whish Payment' : '💵 Cash on Delivery'}
 ${promoCode ? `🎟️ *Promo Code:* ${promoCode}` : ''}
@@ -460,17 +464,27 @@ _Order placed via TopComputers website_
                   <MapPin className="w-4 h-4" />
                   City *
                 </label>
-                <select
+                <input
+                  type="text"
                   value={customerDetails.city}
                   onChange={(e) => handleInputChange('city', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="Enter your city (Arabic or English)"
                   required
-                >
-                  <option value="">Select your city</option>
-                  {lebaneseCities.map(city => (
-                    <option key={city} value={city}>{city}</option>
-                  ))}
-                </select>
+                />
+              </div>
+
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  📝 Order Notes (Optional)
+                </label>
+                <textarea
+                  value={customerDetails.notes || ''}
+                  onChange={(e) => handleInputChange('notes', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white resize-none"
+                  placeholder="Add any special instructions or notes for your order (optional)"
+                  rows={3}
+                />
               </div>
             </div>
 
