@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useTheme } from '../contexts/ThemeContext';
+import { useCatalog } from '../contexts/CatalogContext';
 
 interface StorefrontLayoutProps {
   onSecretGesture?: () => void;
@@ -31,6 +32,7 @@ export default function StorefrontLayout({ onSecretGesture }: StorefrontLayoutPr
   const location = useLocation();
   const navigate = useNavigate();
   const { cart, updateQuantity, removeFromCart, getCartItemCount } = useCart();
+  const { siteSettings, loadingSiteSettings, getSiteSettings } = useCatalog();
   // Allow other components (floating cart button) to open the cart sidebar
   useEffect(() => {
     const handler = () => setIsCartOpen(true);
@@ -38,6 +40,13 @@ export default function StorefrontLayout({ onSecretGesture }: StorefrontLayoutPr
     return () => window.removeEventListener('open-cart', handler as EventListener);
   }, []);
   const { theme, toggleTheme } = useTheme();
+
+  // Load site settings when component mounts
+  useEffect(() => {
+    if (!siteSettings && !loadingSiteSettings) {
+      getSiteSettings();
+    }
+  }, [siteSettings, loadingSiteSettings, getSiteSettings]);
 
   const handleLogoClick = () => {
     if (!onSecretGesture) return;
@@ -363,9 +372,22 @@ export default function StorefrontLayout({ onSecretGesture }: StorefrontLayoutPr
             <div>
               <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
               <div className="space-y-2 text-gray-400">
-                <p>📞 +1 (555) 123-4567</p>
-                <p>📧 info@topcomputers.com</p>
-                <p>📍 123 Tech Street, Digital City</p>
+                <p className="flex items-start">
+                  <span className="mr-2">📞</span>
+                  <span>{siteSettings?.contactPhone || siteSettings?.contactInfo?.phone || '+961 76 601 305'}</span>
+                </p>
+                <p className="flex items-start">
+                  <span className="mr-2">📧</span>
+                  <span>{siteSettings?.contactEmail || siteSettings?.contactInfo?.email || 'topcomputers.lb@gmail.com'}</span>
+                </p>
+                <p className="flex items-start">
+                  <span className="mr-2">📍</span>
+                  <span>{siteSettings?.contactAddress || siteSettings?.contactInfo?.address || 'Ansar, South Lebanon'}</span>
+                </p>
+                <p className="flex items-start">
+                  <span className="mr-2">🕒</span>
+                  <span>{siteSettings?.businessHours || siteSettings?.contactInfo?.hours || 'Monday - Saturday: 9:00 AM - 6:00 PM'}</span>
+                </p>
               </div>
             </div>
           </div>

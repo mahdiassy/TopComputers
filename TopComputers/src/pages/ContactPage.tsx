@@ -205,7 +205,7 @@ _Sent via TopComputers website contact form_
                   <div>
                     <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-1">Address</h3>
                     <p className="text-gray-600 dark:text-gray-400 font-medium mb-3">
-                      {siteSettings?.contactAddress || siteSettings?.contactInfo?.address || 'Technology District, Beirut, Lebanon'}
+                      {siteSettings?.contactAddress || siteSettings?.contactInfo?.address || 'Ansar, South Lebanon'}
                     </p>
                       <div className="mt-2">
                         <a
@@ -228,7 +228,7 @@ _Sent via TopComputers website contact form_
                   <div>
                     <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-1">Business Hours</h3>
                     <p className="text-gray-600 dark:text-gray-400 font-medium">
-                      {siteSettings?.businessHours || siteSettings?.contactInfo?.hours || 'Monday - Friday: 9:00 AM - 6:00 PM'}
+                      {siteSettings?.businessHours || siteSettings?.contactInfo?.hours || 'Monday - Saturday: 9:00 AM - 6:00 PM'}
                     </p>
                   </div>
                 </div>
