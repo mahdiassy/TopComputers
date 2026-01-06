@@ -40,6 +40,7 @@ type PaymentMethod = 'whish' | 'cash_on_delivery';
 
 interface OrderItem {
   productId: string;
+  productSlug: string;
   productTitle: string;
   productImage: string;
   quantity: number;
@@ -301,6 +302,7 @@ export function CartProvider({ children, products: propProducts = [] }: CartProv
         
         const newItem: OrderItem = {
           productId: product.id,
+          productSlug: product.slug,
           productTitle: product.title,
           productImage: product.thumbnail || product.images[0] || '',
           quantity,

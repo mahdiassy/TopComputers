@@ -141,6 +141,7 @@ export type PaymentMethod = 'whish' | 'cash_on_delivery';
 
 export interface OrderItem {
   productId: string;
+  productSlug: string;
   productTitle: string;
   productImage: string;
   quantity: number;

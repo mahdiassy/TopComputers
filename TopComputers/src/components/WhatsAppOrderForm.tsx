@@ -49,6 +49,7 @@ import toast from 'react-hot-toast';
 // OrderItem interface for cart items
 interface OrderItem {
   productId: string;
+  productSlug: string;
   productTitle: string;
   productImage: string;
   quantity: number;
@@ -181,7 +182,7 @@ export default function WhatsAppOrderForm({
         totalPrice = cartTotal || 0;
         
         const productsList = cartItems.map(item => 
-          `📱 ${item.productTitle}\n   $${item.price.toFixed(2)} × ${item.quantity} = $${item.totalPrice.toFixed(2)}\n   🔗 Link: ${window.location.origin}/product/${item.productId}`
+          `📱 ${item.productTitle}\n   $${item.price.toFixed(2)} × ${item.quantity} = $${item.totalPrice.toFixed(2)}\n   🔗 Link: ${window.location.origin}/product/${item.productSlug}`
         ).join('\n\n');
 
         orderDetails = `
