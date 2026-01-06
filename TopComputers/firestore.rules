@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Admin collections - accessible to all users in development
+    // Update these rules for production with proper authentication
+    match /categories/{document} {
+      allow read, write: if true;
+    }
+    match /brands/{document} {
+      allow read, write: if true;
+    }
+    match /products/{document} {
+      allow read, write: if true;
+    }
+    match /mainServices/{document} {
+      allow read, write: if true;
+    }
+    match /subServices/{document} {
+      allow read, write: if true;
+    }
+    match /inventoryLogs/{document} {
+      allow read, write: if true;
+    }
+    match /siteSettings/{document} {
+      allow read, write: if true;
+    }
+    match /users/{document} {
+      allow read, write: if true;
+    }
+    
+    // Fallback - allow all other documents (for development)
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

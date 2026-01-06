@@ -1,0 +1,345 @@
+{
+  "categories": [
+    {
+      "name": "Computers",
+      "slug": "computers",
+      "icon": "monitor",
+      "active": true
+    },
+    {
+      "name": "Laptops",
+      "slug": "laptops", 
+      "icon": "laptop",
+      "active": true
+    },
+    {
+      "name": "Smartphones",
+      "slug": "smartphones",
+      "icon": "smartphone",
+      "active": true
+    },
+    {
+      "name": "TVs & Monitors",
+      "slug": "tvs-monitors",
+      "icon": "tv",
+      "active": true
+    },
+    {
+      "name": "Audio",
+      "slug": "audio",
+      "icon": "headphones",
+      "active": true
+    },
+    {
+      "name": "Accessories",
+      "slug": "accessories",
+      "icon": "camera",
+      "active": true
+    }
+  ],
+  "brands": [
+    {
+      "name": "Apple",
+      "slug": "apple",
+      "logo": "/brands/apple-logo.png",
+      "active": true
+    },
+    {
+      "name": "Samsung",
+      "slug": "samsung",
+      "logo": "/brands/samsung-logo.png",
+      "active": true
+    },
+    {
+      "name": "Dell",
+      "slug": "dell",
+      "logo": "/brands/dell-logo.png",
+      "active": true
+    },
+    {
+      "name": "HP",
+      "slug": "hp",
+      "logo": "/brands/hp-logo.png",
+      "active": true
+    },
+    {
+      "name": "Lenovo",
+      "slug": "lenovo",
+      "logo": "/brands/lenovo-logo.png",
+      "active": true
+    },
+    {
+      "name": "Sony",
+      "slug": "sony",
+      "logo": "/brands/sony-logo.png",
+      "active": true
+    },
+    {
+      "name": "Asus",
+      "slug": "asus",
+      "logo": "/brands/asus-logo.png",
+      "active": true
+    },
+    {
+      "name": "Microsoft",
+      "slug": "microsoft",
+      "logo": "/brands/microsoft-logo.png",
+      "active": true
+    }
+  ],
+  "products": [
+    {
+      "title": "MacBook Pro 14-inch M3",
+      "slug": "macbook-pro-14-m3",
+      "categoryId": "laptops",
+      "brandId": "apple",
+      "sku": "MBP14M3-512",
+      "price": 1999,
+      "salePrice": 1799,
+      "currency": "USD",
+      "stock": 25,
+      "status": "active",
+      "tags": ["professional", "creative", "performance"],
+      "specs": {
+        "Processor": "Apple M3 Chip",
+        "Memory": "16GB Unified Memory",
+        "Storage": "512GB SSD",
+        "Display": "14-inch Liquid Retina XDR",
+        "Graphics": "M3 GPU 10-core",
+        "Battery Life": "Up to 18 hours",
+        "Weight": "3.5 lbs"
+      },
+      "images": [
+        "/products/macbook-pro-14-1.jpg",
+        "/products/macbook-pro-14-2.jpg",
+        "/products/macbook-pro-14-3.jpg"
+      ],
+      "thumbnail": "/products/macbook-pro-14-thumb.jpg",
+      "description": "The most advanced MacBook Pro ever, featuring the powerful M3 chip for incredible performance and efficiency."
+    },
+    {
+      "title": "Dell XPS 13 Plus",
+      "slug": "dell-xps-13-plus",
+      "categoryId": "laptops",
+      "brandId": "dell",
+      "sku": "XPS13P-I7-512",
+      "price": 1299,
+      "currency": "USD",
+      "stock": 18,
+      "status": "active",
+      "tags": ["ultrabook", "business", "portable"],
+      "specs": {
+        "Processor": "Intel Core i7-1360P",
+        "Memory": "16GB LPDDR5",
+        "Storage": "512GB SSD",
+        "Display": "13.4-inch FHD+",
+        "Graphics": "Intel Iris Xe",
+        "Battery Life": "Up to 12 hours",
+        "Weight": "2.73 lbs"
+      },
+      "images": [
+        "/products/dell-xps-13-1.jpg",
+        "/products/dell-xps-13-2.jpg"
+      ],
+      "thumbnail": "/products/dell-xps-13-thumb.jpg",
+      "description": "Premium ultrabook with stunning design and powerful performance for professionals on the go."
+    },
+    {
+      "title": "iPhone 15 Pro Max",
+      "slug": "iphone-15-pro-max",
+      "categoryId": "smartphones",
+      "brandId": "apple",
+      "sku": "IP15PM-256-TB",
+      "price": 1199,
+      "salePrice": 1099,
+      "currency": "USD",
+      "stock": 42,
+      "status": "active",
+      "tags": ["flagship", "camera", "premium"],
+      "specs": {
+        "Display": "6.7-inch Super Retina XDR",
+        "Chip": "A17 Pro",
+        "Storage": "256GB",
+        "Camera": "48MP Main + 12MP Ultra Wide + 12MP Telephoto",
+        "Battery": "Up to 29 hours video playback",
+        "Material": "Titanium",
+        "Colors": "Natural Titanium, Blue Titanium, White Titanium, Black Titanium"
+      },
+      "images": [
+        "/products/iphone-15-pro-max-1.jpg",
+        "/products/iphone-15-pro-max-2.jpg",
+        "/products/iphone-15-pro-max-3.jpg"
+      ],
+      "thumbnail": "/products/iphone-15-pro-max-thumb.jpg",
+      "description": "The ultimate iPhone with titanium design, advanced camera system, and the most powerful A17 Pro chip."
+    },
+    {
+      "title": "Samsung Galaxy S24 Ultra",
+      "slug": "samsung-galaxy-s24-ultra",
+      "categoryId": "smartphones",
+      "brandId": "samsung",
+      "sku": "GS24U-512-BLK",
+      "price": 1199,
+      "currency": "USD",
+      "stock": 31,
+      "status": "active",
+      "tags": ["android", "s-pen", "flagship"],
+      "specs": {
+        "Display": "6.8-inch Dynamic AMOLED 2X",
+        "Processor": "Snapdragon 8 Gen 3",
+        "Storage": "512GB",
+        "RAM": "12GB",
+        "Camera": "200MP Main + 50MP Telephoto + 10MP Telephoto + 12MP Ultra Wide",
+        "Battery": "5000mAh",
+        "S Pen": "Included",
+        "Colors": "Titanium Black, Titanium Gray, Titanium Violet, Titanium Yellow"
+      },
+      "images": [
+        "/products/samsung-s24-ultra-1.jpg",
+        "/products/samsung-s24-ultra-2.jpg"
+      ],
+      "thumbnail": "/products/samsung-s24-ultra-thumb.jpg",
+      "description": "Ultimate productivity and creativity with built-in S Pen and advanced AI features."
+    },
+    {
+      "title": "Sony WH-1000XM5 Headphones",
+      "slug": "sony-wh-1000xm5",
+      "categoryId": "audio",
+      "brandId": "sony",
+      "sku": "SONY-WH1000XM5-BLK",
+      "price": 399,
+      "salePrice": 349,
+      "currency": "USD",
+      "stock": 67,
+      "status": "active",
+      "tags": ["wireless", "noise-canceling", "premium"],
+      "specs": {
+        "Driver": "30mm",
+        "Frequency Response": "4Hz-40kHz",
+        "Battery Life": "Up to 30 hours",
+        "Charging": "USB-C, Quick charge",
+        "Connectivity": "Bluetooth 5.2, NFC",
+        "Noise Canceling": "Industry-leading",
+        "Weight": "250g",
+        "Colors": "Black, Silver"
+      },
+      "images": [
+        "/products/sony-wh1000xm5-1.jpg",
+        "/products/sony-wh1000xm5-2.jpg"
+      ],
+      "thumbnail": "/products/sony-wh1000xm5-thumb.jpg",
+      "description": "Industry-leading noise canceling with premium sound quality for music and calls."
+    },
+    {
+      "title": "Gaming Desktop PC - RTX 4080",
+      "slug": "gaming-desktop-rtx-4080",
+      "categoryId": "computers",
+      "brandId": "asus",
+      "sku": "ASUS-ROG-4080-32GB",
+      "price": 2499,
+      "currency": "USD",
+      "stock": 12,
+      "status": "active",
+      "tags": ["gaming", "high-performance", "desktop"],
+      "specs": {
+        "Processor": "Intel Core i7-13700F",
+        "Graphics": "NVIDIA GeForce RTX 4080",
+        "Memory": "32GB DDR5-5600",
+        "Storage": "1TB NVMe SSD + 2TB HDD",
+        "Motherboard": "ASUS ROG STRIX Z790-E",
+        "PSU": "850W 80+ Gold",
+        "Cooling": "AIO Liquid Cooling",
+        "Case": "ASUS ROG Mid-Tower"
+      },
+      "images": [
+        "/products/gaming-desktop-1.jpg",
+        "/products/gaming-desktop-2.jpg",
+        "/products/gaming-desktop-3.jpg"
+      ],
+      "thumbnail": "/products/gaming-desktop-thumb.jpg",
+      "description": "High-performance gaming desktop with RTX 4080 graphics and latest Intel processor."
+    },
+    {
+      "title": "LG 27-inch 4K Monitor",
+      "slug": "lg-27-4k-monitor",
+      "categoryId": "tvs-monitors",
+      "brandId": "lg",
+      "sku": "LG-27UP850-W",
+      "price": 449,
+      "currency": "USD",
+      "stock": 28,
+      "status": "active",
+      "tags": ["4k", "usb-c", "professional"],
+      "specs": {
+        "Size": "27 inches",
+        "Resolution": "3840 x 2160 (4K UHD)",
+        "Panel Type": "IPS",
+        "Refresh Rate": "60Hz",
+        "Color Gamut": "95% DCI-P3",
+        "Connectivity": "USB-C, HDMI, DisplayPort",
+        "HDR": "HDR10",
+        "Stand": "Height/Tilt/Swivel Adjustable"
+      },
+      "images": [
+        "/products/lg-27-4k-1.jpg",
+        "/products/lg-27-4k-2.jpg"
+      ],
+      "thumbnail": "/products/lg-27-4k-thumb.jpg",
+      "description": "Professional 4K monitor with USB-C connectivity and accurate color reproduction."
+    },
+    {
+      "title": "iPad Pro 12.9-inch M2",
+      "slug": "ipad-pro-12-9-m2",
+      "categoryId": "accessories",
+      "brandId": "apple",
+      "sku": "IPADPRO129-M2-512",
+      "price": 1199,
+      "currency": "USD",
+      "stock": 19,
+      "status": "active",
+      "tags": ["tablet", "creative", "productivity"],
+      "specs": {
+        "Display": "12.9-inch Liquid Retina XDR",
+        "Chip": "Apple M2",
+        "Storage": "512GB",
+        "Camera": "12MP Wide + 10MP Ultra Wide",
+        "Front Camera": "12MP TrueDepth",
+        "Connectivity": "Wi-Fi 6E, 5G",
+        "Apple Pencil": "Compatible (2nd gen)",
+        "Weight": "1.5 lbs"
+      },
+      "images": [
+        "/products/ipad-pro-12-1.jpg",
+        "/products/ipad-pro-12-2.jpg"
+      ],
+      "thumbnail": "/products/ipad-pro-12-thumb.jpg",
+      "description": "The ultimate iPad experience with M2 chip and stunning Liquid Retina XDR display."
+    }
+  ],
+  "siteSettings": {
+    "homeBanners": [
+      {
+        "id": "banner1",
+        "title": "Latest Technology",
+        "subtitle": "Discover the best computers, laptops, and electronics at unbeatable prices",
+        "image": "/banners/tech-banner-1.jpg",
+        "link": "/catalog",
+        "active": true
+      }
+    ],
+    "featuredCategories": ["laptops", "smartphones", "computers", "audio"],
+    "featuredProducts": ["macbook-pro-14-m3", "iphone-15-pro-max", "samsung-galaxy-s24-ultra", "sony-wh-1000xm5"],
+    "contactInfo": {
+      "phone": "(555) 123-4567",
+      "email": "info@topcomputers.com",
+      "address": "123 Tech Street, Digital City, DC 12345",
+      "hours": "Mon-Fri: 9AM-7PM, Sat: 10AM-6PM, Sun: 12PM-5PM"
+    },
+    "socialMedia": {
+      "facebook": "https://facebook.com/topcomputers",
+      "instagram": "https://instagram.com/topcomputers",
+      "twitter": "https://twitter.com/topcomputers",
+      "youtube": "https://youtube.com/topcomputers"
+    }
+  }
+}

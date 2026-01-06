@@ -1,0 +1,669 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Brand Colors */
+  --brand-primary: #1a365d;
+  --brand-secondary: #2d3748;
+  --brand-accent: #3182ce;
+  --brand-light: #63b3ed;
+  --brand-dark: #0f1419;
+  --brand-orange: #ed8936;
+  --brand-green: #38a169;
+  --brand-red: #e53e3e;
+
+  /* Light theme variables */
+  --tooltip-bg: #ffffff;
+  --tooltip-border: #e5e7eb;
+  --tooltip-text: #111827;
+  
+  /* Toast variables */
+  --toast-bg: #ffffff;
+  --toast-color: #111827;
+  --toast-border: #e5e7eb;
+}
+
+.dark {
+  /* Dark theme variables */
+  --tooltip-bg: #374151;
+  --tooltip-border: #4b5563;
+  --tooltip-text: #f9fafb;
+  
+  /* Toast variables */
+  --toast-bg: #1f2937;
+  --toast-color: #f9fafb;
+  --toast-border: #4b5563;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  /* Prevent zoom on iOS when focusing inputs */
+  -webkit-text-size-adjust: 100%;
+  /* Improve touch scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+  /* Smooth theme transitions */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  /* Ensure no white corners in dark mode */
+  background-color: #f9fafb;
+}
+
+.dark body {
+  background-color: #111827;
+}
+
+html {
+  background-color: #f9fafb;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+.dark html {
+  background-color: #111827;
+}
+
+/* Make sure touch targets are at least 44px for accessibility */
+button,
+a,
+input,
+select,
+textarea {
+  min-height: 44px;
+}
+
+@layer components {
+  .btn-primary {
+    padding: 1rem 1rem;
+    background-color: var(--brand-accent);
+    color: white;
+    border-radius: 0.5rem;
+    transition: all 200ms;
+    min-height: 44px;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--brand-primary);
+  }
+
+  .dark .btn-primary {
+    background-color: var(--brand-primary);
+  }
+
+  .dark .btn-primary:hover {
+    background-color: var(--brand-accent);
+  }
+
+  .btn-secondary {
+    padding: 1rem 1rem;
+    background-color: var(--brand-secondary);
+    color: white;
+    border-radius: 0.5rem;
+    transition: all 200ms;
+    min-height: 44px;
+    cursor: pointer;
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--brand-dark);
+  }
+
+  .dark .btn-secondary {
+    background-color: var(--brand-dark);
+  }
+
+  .dark .btn-secondary:hover {
+    background-color: var(--brand-secondary);
+  }
+
+  .brand-gradient {
+    background: linear-gradient(to right, var(--brand-primary), var(--brand-accent));
+  }
+
+  .brand-text {
+    color: var(--brand-primary);
+  }
+
+  .dark .brand-text {
+    color: var(--brand-light);
+  }
+
+  .brand-accent-text {
+    color: var(--brand-accent);
+  }
+
+  .dark .brand-accent-text {
+    color: var(--brand-light);
+  }
+
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 min-h-[44px];
+  }
+
+  /* Fix date input calendar icon for dark mode */
+  .input-field[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.5);
+    cursor: pointer;
+  }
+
+  .dark .input-field[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+  }
+
+  /* Fix time input clock icon for dark mode */
+  .input-field[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.5);
+    cursor: pointer;
+  }
+
+  .dark .input-field[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+  }
+
+  /* Custom date input calendar icon styling */
+  .date-input-dark::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(0);
+  }
+
+  .dark .date-input-dark::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
+
+  .card {
+    @apply bg-white dark:bg-gray-800 p-4 lg:p-6 rounded-lg shadow-md dark:shadow-lg border border-gray-100 dark:border-gray-700 transition-all duration-200;
+  }
+
+  /* Theme-aware text classes */
+  .text-primary {
+    @apply text-gray-900 dark:text-gray-100;
+  }
+
+  .text-secondary {
+    @apply text-gray-600 dark:text-gray-400;
+  }
+
+  .text-muted {
+    @apply text-gray-500 dark:text-gray-500;
+  }
+
+  /* Theme-aware background classes */
+  .bg-primary {
+    @apply bg-white dark:bg-gray-900;
+  }
+
+  .bg-secondary {
+    @apply bg-gray-50 dark:bg-gray-800;
+  }
+
+  /* Theme-aware border classes */
+  .border-primary {
+    @apply border-gray-200 dark:border-gray-700;
+  }
+
+  .border-secondary {
+    @apply border-gray-300 dark:border-gray-600;
+  }
+
+  /* Line clamp utility for truncating text */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* Custom scrollbar for webkit browsers with dark mode support */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f3f4f6;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background-color: #1f2937;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280;
+}
+
+/* Improve mobile table scrolling */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure smooth transitions for all elements */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
+}
+
+/* Ensure no white backgrounds leak through in dark mode */
+.dark * {
+  background-color: inherit;
+}
+
+/* Fix any potential white corners or backgrounds */
+.dark div, .dark section, .dark main, .dark article, .dark aside, .dark nav, .dark header, .dark footer {
+  background-color: transparent;
+}
+
+/* Ensure proper dark mode for all containers */
+.dark .bg-white {
+  background-color: #1f2937 !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: #111827 !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: #1f2937 !important;
+}
+
+/* Ensure full coverage for admin pages */
+.dark .admin-layout {
+  background-color: #111827 !important;
+  min-height: 100vh !important;
+}
+
+.dark .admin-main {
+  background-color: #111827 !important;
+  min-height: 100vh !important;
+}
+
+/* Provide extra scrollable breathing room at the bottom of admin pages */
+.admin-main::after {
+  content: '';
+  display: block;
+  height: 20vh; /* extra 20% scroll space */
+}
+
+/* Fix any remaining white spaces */
+.dark body, .dark html, .dark #root {
+  background-color: #111827 !important;
+  min-height: 100vh !important;
+}
+
+/* Ensure all admin containers are properly covered */
+.dark .admin-container {
+  background-color: #111827 !important;
+}
+
+/* Toast notifications dark mode styling */
+.dark [data-sonner-toast] {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.dark [data-sonner-toast] [data-content] {
+  color: #f9fafb !important;
+}
+
+.dark [data-sonner-toast] [data-title] {
+  color: #f9fafb !important;
+}
+
+.dark [data-sonner-toast] [data-description] {
+  color: #d1d5db !important;
+}
+
+/* Success toast styling */
+.dark [data-sonner-toast][data-type="success"] {
+  background-color: #064e3b !important;
+  border-color: #10b981 !important;
+}
+
+.dark [data-sonner-toast][data-type="success"] [data-content] {
+  color: #d1fae5 !important;
+}
+
+/* Error toast styling */
+.dark [data-sonner-toast][data-type="error"] {
+  background-color: #7f1d1d !important;
+  border-color: #ef4444 !important;
+}
+
+.dark [data-sonner-toast][data-type="error"] [data-content] {
+  color: #fecaca !important;
+}
+
+/* Loading toast styling */
+.dark [data-sonner-toast][data-type="loading"] {
+  background-color: #1e3a8a !important;
+  border-color: #3b82f6 !important;
+}
+
+.dark [data-sonner-toast][data-type="loading"] [data-content] {
+  color: #dbeafe !important;
+}
+
+/* Generic toast styling for react-hot-toast */
+.dark .react-hot-toast {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.dark .react-hot-toast > div {
+  color: #f9fafb !important;
+}
+
+/* Success toast specific styling */
+.dark .react-hot-toast[data-type="success"] {
+  background-color: #064e3b !important;
+  border-color: #10b981 !important;
+}
+
+.dark .react-hot-toast[data-type="success"] > div {
+  color: #d1fae5 !important;
+}
+
+/* React-hot-toast success icon styling */
+.dark .react-hot-toast[data-type="success"] svg {
+  color: #10b981 !important;
+  fill: #10b981 !important;
+}
+
+.dark .react-hot-toast[data-type="success"] [data-icon] {
+  color: #10b981 !important;
+  background-color: #10b981 !important;
+}
+
+.dark .react-hot-toast[data-type="success"] [data-icon] svg {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* Error toast specific styling */
+.dark .react-hot-toast[data-type="error"] {
+  background-color: #7f1d1d !important;
+  border-color: #ef4444 !important;
+}
+
+.dark .react-hot-toast[data-type="error"] > div {
+  color: #fecaca !important;
+}
+
+/* React-hot-toast error icon styling */
+.dark .react-hot-toast[data-type="error"] svg {
+  color: #ef4444 !important;
+  fill: #ef4444 !important;
+}
+
+.dark .react-hot-toast[data-type="error"] [data-icon] {
+  color: #ef4444 !important;
+  background-color: #ef4444 !important;
+}
+
+.dark .react-hot-toast[data-type="error"] [data-icon] svg {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* Ensure all toast text is visible in dark mode */
+.dark [class*="toast"] {
+  color: #f9fafb !important;
+}
+
+.dark [class*="toast"] * {
+  color: inherit !important;
+}
+
+/* Additional comprehensive toast styling */
+.dark [data-hot-toast] {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.dark [data-hot-toast] * {
+  color: #f9fafb !important;
+}
+
+/* Success toast comprehensive styling */
+.dark [data-hot-toast][data-type="success"] {
+  background-color: #064e3b !important;
+  border-color: #10b981 !important;
+}
+
+.dark [data-hot-toast][data-type="success"] * {
+  color: #d1fae5 !important;
+}
+
+/* Success toast icon styling */
+.dark [data-hot-toast][data-type="success"] svg {
+  color: #10b981 !important;
+  fill: #10b981 !important;
+}
+
+.dark [data-hot-toast][data-type="success"] [data-icon] {
+  color: #10b981 !important;
+  background-color: #10b981 !important;
+}
+
+.dark [data-hot-toast][data-type="success"] [data-icon] svg {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* Error toast comprehensive styling */
+.dark [data-hot-toast][data-type="error"] {
+  background-color: #7f1d1d !important;
+  border-color: #ef4444 !important;
+}
+
+.dark [data-hot-toast][data-type="error"] * {
+  color: #fecaca !important;
+}
+
+/* Loading toast comprehensive styling */
+.dark [data-hot-toast][data-type="loading"] {
+  background-color: #1e3a8a !important;
+  border-color: #3b82f6 !important;
+}
+
+.dark [data-hot-toast][data-type="loading"] * {
+  color: #dbeafe !important;
+}
+
+/* Fallback for any toast element */
+.dark div[role="alert"] {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.dark div[role="alert"] * {
+  color: #f9fafb !important;
+}
+
+/* Product card image centering and dark mode improvements */
+.dark .product-card img {
+  object-position: center !important;
+}
+
+.dark .product-card .no-image-placeholder {
+  background-color: #374151 !important;
+  color: #d1d5db !important;
+}
+
+.dark .product-card .no-image-placeholder .icon {
+  background-color: #4b5563 !important;
+  color: #9ca3af !important;
+}
+
+/* Ensure all product card text is visible in dark mode */
+.dark .product-card h3,
+.dark .product-card .product-title {
+  color: #f9fafb !important;
+}
+
+.dark .product-card .product-sku,
+.dark .product-card .product-price {
+  color: #d1d5db !important;
+}
+
+.dark .product-card .stock-status {
+  color: #10b981 !important;
+}
+
+.dark .product-card .out-of-stock {
+  color: #ef4444 !important;
+}
+
+/* Button improvements for dark mode */
+.dark .product-card .add-to-cart-btn {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  border: 1px solid #1d4ed8 !important;
+}
+
+.dark .product-card .add-to-cart-btn:hover {
+  background-color: #1d4ed8 !important;
+  border-color: #1e40af !important;
+}
+
+/* Action buttons styling for ProductDetails page */
+.dark button[class*="bg-gradient-to-r"] {
+  background: linear-gradient(to right, #1d4ed8, #1e40af) !important;
+  color: #ffffff !important;
+  border: 2px solid #3b82f6 !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark button[class*="from-green-600"] {
+  background: linear-gradient(to right, #059669, #047857) !important;
+  color: #ffffff !important;
+  border: 2px solid #10b981 !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark button[class*="from-blue-600"]:hover {
+  background: linear-gradient(to right, #1e40af, #1e3a8a) !important;
+  border-color: #60a5fa !important;
+  transform: scale(1.05) !important;
+}
+
+.dark button[class*="from-green-600"]:hover {
+  background: linear-gradient(to right, #047857, #065f46) !important;
+  border-color: #34d399 !important;
+  transform: scale(1.05) !important;
+}
+
+/* Ensure buttons are always visible and prominent */
+.dark button {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.dark button:not([class*="text-"]) {
+  color: #ffffff !important;
+}
+
+/* Force button styling for action buttons */
+.dark .action-buttons button,
+.dark [class*="space-y-3"] button {
+  background: linear-gradient(to right, #1d4ed8, #1e40af) !important;
+  color: #ffffff !important;
+  border: 2px solid #3b82f6 !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+  letter-spacing: 0.025em !important;
+}
+
+/* Comprehensive icon styling for all toast types */
+.dark [data-hot-toast] svg,
+.dark .react-hot-toast svg,
+.dark [class*="toast"] svg {
+  color: #10b981 !important;
+  fill: #10b981 !important;
+}
+
+/* Success toast icons - bright green */
+.dark [data-hot-toast][data-type="success"] svg,
+.dark .react-hot-toast[data-type="success"] svg {
+  color: #10b981 !important;
+  fill: #10b981 !important;
+}
+
+/* Error toast icons - bright red */
+.dark [data-hot-toast][data-type="error"] svg,
+.dark .react-hot-toast[data-type="error"] svg {
+  color: #ef4444 !important;
+  fill: #ef4444 !important;
+}
+
+/* Loading toast icons - bright blue */
+.dark [data-hot-toast][data-type="loading"] svg,
+.dark .react-hot-toast[data-type="loading"] svg {
+  color: #3b82f6 !important;
+  fill: #3b82f6 !important;
+}
+
+/* Icon containers and backgrounds */
+.dark [data-hot-toast] [data-icon],
+.dark .react-hot-toast [data-icon],
+.dark [class*="toast"] [data-icon] {
+  background-color: #10b981 !important;
+  color: #ffffff !important;
+}
+
+.dark [data-hot-toast][data-type="success"] [data-icon],
+.dark .react-hot-toast[data-type="success"] [data-icon] {
+  background-color: #10b981 !important;
+  color: #ffffff !important;
+}
+
+.dark [data-hot-toast][data-type="error"] [data-icon],
+.dark .react-hot-toast[data-type="error"] [data-icon] {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+.dark [data-hot-toast][data-type="loading"] [data-icon],
+.dark .react-hot-toast[data-type="loading"] [data-icon] {
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+/* Force icon visibility with high contrast */
+.dark [data-hot-toast] svg path,
+.dark .react-hot-toast svg path,
+.dark [class*="toast"] svg path {
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
