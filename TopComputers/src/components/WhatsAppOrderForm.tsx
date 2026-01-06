@@ -236,7 +236,7 @@ _Order placed via TopComputers website_
       }
 
       // Get WhatsApp number - Lebanese business number
-      const whatsappNumber = '+96176601305'; // Your business WhatsApp number
+      const whatsappNumber = '+96171363816'; // Your business WhatsApp number
       
       const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(orderDetails)}`;
       
