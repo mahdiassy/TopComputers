@@ -11,6 +11,7 @@ import { ActivityProvider } from './contexts/ActivityContext';
 import { MediaProvider } from './contexts/MediaContext';
 import PersistentCartIcon from './components/PersistentCartIcon';
 import MobileBottomNav from './components/MobileBottomNav';
+import MaintenanceMode from './components/MaintenanceMode';
 
 // CartProviderWrapper component to pass products from CatalogProvider to CartProvider
 function CartProviderWrapper({ children }: { children: React.ReactNode }) {
@@ -67,6 +68,40 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+// Maintenance Mode Wrapper - checks if site is in maintenance mode
+const MaintenanceModeWrapper = ({ children }: { children: React.ReactNode }) => {
+  const { siteSettings, loadingSiteSettings } = useCatalog();
+  const { currentUser, userData, loading: authLoading } = useAuth();
+  const location = useLocation();
+
+  // Debug logging
+  useEffect(() => {
+    console.log('🔍 Maintenance Check:', {
+      enabled: siteSettings?.maintenance?.enabled,
+      isAdmin: currentUser && userData?.isAdmin,
+      isAdminRoute: location.pathname.startsWith('/admin'),
+      pathname: location.pathname
+    });
+  }, [siteSettings, currentUser, userData, location.pathname]);
+
+  // Show loading while checking settings
+  if (loadingSiteSettings || authLoading) {
+    return <div className="w-full h-screen flex items-center justify-center bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">Loading...</div>;
+  }
+
+  // Allow admin users to bypass maintenance mode
+  const isAdmin = currentUser && userData?.isAdmin;
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  // Show maintenance mode if enabled and user is not admin (or not on admin routes)
+  if (siteSettings?.maintenance?.enabled && !isAdmin && !isAdminRoute) {
+    console.log('🚧 Showing maintenance mode');
+    return <MaintenanceMode />;
+  }
+
+  return <>{children}</>;
+};
+
 function App() {
   const handleSecretGesture = () => {
     // Navigate to admin login
@@ -83,6 +118,7 @@ function App() {
               <SuppliersProvider>
                 <MediaProvider>
                   <CatalogProvider>
+                    <MaintenanceModeWrapper>
                     <CartProviderWrapper>
                   <Toaster 
                     position="top-right"
@@ -172,6 +208,7 @@ function App() {
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                     </CartProviderWrapper>
+                    </MaintenanceModeWrapper>
                   </CatalogProvider>
                 </MediaProvider>
               </SuppliersProvider>

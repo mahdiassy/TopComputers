@@ -138,11 +138,11 @@ export default function StorefrontLayout({ onSecretGesture }: StorefrontLayoutPr
               {/* Cart Button */}
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-200"
+                className="relative p-2 bg-gradient-to-br from-blue-600 to-indigo-600 dark:from-orange-500 dark:to-pink-600 text-white rounded-lg shadow-lg dark:shadow-orange-500/30 hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
                 <ShoppingCart className="h-6 w-6" />
                 {getCartItemCount() > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-pink-600 dark:from-yellow-400 dark:to-orange-500 text-white dark:text-gray-900 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-md dark:shadow-yellow-400/50 border border-white dark:border-gray-800">
                     {getCartItemCount()}
                   </span>
                 )}
@@ -249,7 +249,7 @@ export default function StorefrontLayout({ onSecretGesture }: StorefrontLayoutPr
                   <div className="p-6">
                     <div className="space-y-4">
                       {cart.items.map((item) => (
-                        <div key={item.productId} className="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <div key={item.productId} className="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700/50 border dark:border-gray-600 rounded-lg hover:shadow-md dark:hover:shadow-blue-500/20 transition-all duration-200">
                           <img
                             src={item.productImage}
                             alt={item.productTitle}
@@ -315,15 +315,24 @@ export default function StorefrontLayout({ onSecretGesture }: StorefrontLayoutPr
                     <Link
                       to="/cart"
                       onClick={() => setIsCartOpen(false)}
-                      className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors text-center block"
+                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-orange-500 dark:to-pink-600 text-white py-3 px-4 rounded-lg font-bold hover:from-blue-700 hover:to-indigo-700 dark:hover:from-orange-400 dark:hover:to-pink-500 transition-all duration-300 text-center block shadow-lg dark:shadow-orange-500/40 hover:shadow-xl dark:hover:shadow-orange-400/50 transform hover:scale-[1.02]"
                     >
                       View Cart & Checkout
                     </Link>
                     <button
                       onClick={() => setIsCartOpen(false)}
-                      className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 py-3 px-4 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                      className="w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 py-3 px-4 rounded-lg font-bold hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-[1.02] border-2 border-gray-300 dark:border-gray-500 select-none"
+                      style={{ WebkitTapHighlightColor: 'transparent' }}
                     >
-                      Continue Shopping
+                      <span className="flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20 7h-9"></path>
+                          <path d="M14 17H5"></path>
+                          <circle cx="17" cy="17" r="3"></circle>
+                          <circle cx="7" cy="7" r="3"></circle>
+                        </svg>
+                        Continue Shopping
+                      </span>
                     </button>
                   </div>
                 </div>

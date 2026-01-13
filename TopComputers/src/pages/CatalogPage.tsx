@@ -447,8 +447,8 @@ function Filters({ filters, onFiltersChange, isOpen, onClose }: FiltersProps) {
                 />
                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-1000 ease-out ${
                   filters.availability === option.value
-                    ? 'bg-orange-600 border-orange-600' 
-                    : 'border-gray-300 dark:border-gray-600 group-hover:border-orange-400 dark:group-hover:border-orange-500'
+                    ? 'bg-orange-600 dark:bg-orange-500 border-orange-600 dark:border-orange-500' 
+                    : 'border-gray-400 dark:border-gray-400 bg-white dark:bg-gray-700 group-hover:border-orange-400 dark:group-hover:border-orange-500'
                 }`}>
                   {filters.availability === option.value && (
                     <div className="w-2 h-2 bg-white rounded-full"></div>

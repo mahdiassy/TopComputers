@@ -125,6 +125,11 @@ export interface SiteSettings {
     emailOnLowStock: boolean;
     lowStockThreshold: number;
   };
+  maintenance: {
+    enabled: boolean;
+    title: string;
+    message: string;
+  };
   updatedAt: Date;
 }
 

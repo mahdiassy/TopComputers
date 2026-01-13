@@ -70,16 +70,16 @@ export default function CategoriesPage() {
                 className="block"
                 >
                   <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 text-center group-hover:bg-blue-50 dark:group-hover:bg-gray-700 w-full aspect-square flex flex-col items-center justify-center border border-gray-100 dark:border-gray-700 group dark:shadow-blue-500/30 dark:shadow-2xl dark:shadow-[0_0_20px_rgba(59,130,246,0.4)] dark:shadow-[0_0_40px_rgba(59,130,246,0.2)]">
-                    <div className="w-16 h-16 sm:w-28 sm:h-28 mx-auto mb-3 sm:mb-6 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-700 dark:to-gray-600 rounded-2xl sm:rounded-3xl flex items-center justify-center overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02]">
+                    <div className="w-16 h-16 sm:w-28 sm:h-28 aspect-square mx-auto mb-3 sm:mb-6 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-700 dark:to-gray-600 rounded-2xl sm:rounded-3xl flex items-center justify-center overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02]">
                       {category.image ? (
                         <img
                           src={category.image}
                           alt={category.name}
-                          className="w-full h-full object-cover rounded-2xl sm:rounded-3xl transition-transform duration-300 group-hover:scale-110"
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                           loading="lazy"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
-                            e.currentTarget.nextElementSibling.style.display = 'flex';
+                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
                           }}
                         />
                       ) : null}

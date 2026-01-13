@@ -8,7 +8,9 @@ import {
   MapPin,
   Clock,
   Eye,
-  EyeOff
+  EyeOff,
+  Wrench,
+  AlertTriangle
 } from 'lucide-react';
 import { useCatalog } from '../contexts/CatalogContext';
 import type { SiteSettings } from '../types/catalog';
@@ -99,6 +101,11 @@ export default function AdminSettings() {
       emailOnLowStock: true,
       lowStockThreshold: 5
     },
+    maintenance: {
+      enabled: false,
+      title: '🔧 We\'ll Be Right Back!',
+      message: 'We\'re currently performing scheduled maintenance to improve your experience. We\'ll be back online shortly. Thank you for your patience! 💙'
+    },
     updatedAt: new Date()
   });
   
@@ -142,6 +149,12 @@ export default function AdminSettings() {
           enableWishlist: true,
           showReturnPolicy: true,
           ...siteSettings.features
+        },
+        maintenance: {
+          enabled: false,
+          title: '🔧 We\'ll Be Right Back!',
+          message: 'We\'re currently performing scheduled maintenance to improve your experience. We\'ll be back online shortly. Thank you for your patience! 💙',
+          ...siteSettings.maintenance
         }
       };
       setFormData(mergedSettings);
@@ -151,8 +164,13 @@ export default function AdminSettings() {
   const handleSave = async () => {
     setSaving(true);
     try {
+      console.log('💾 Saving settings:', formData.maintenance);
       await updateSiteSettings(formData);
+      console.log('✅ Settings saved successfully');
       alert('Settings saved successfully!');
+      
+      // Force reload settings to ensure state is updated
+      window.location.reload();
     } catch (error) {
       console.error('Error saving settings:', error);
       alert('Error saving settings. Please try again.');
@@ -720,6 +738,85 @@ export default function AdminSettings() {
                   placeholder="https://youtube.com/topcomputers"
                 />
               </div>
+            </div>
+          </SettingsSection>
+
+          {/* Maintenance Mode */}
+          <SettingsSection 
+            title="Maintenance Mode" 
+            description="Control site availability and display maintenance messages"
+          >
+            <div className="space-y-6">
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
+                <div className="flex items-start">
+                  <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-500 mr-3 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-bold text-yellow-800 dark:text-yellow-200 mb-1">Important Notice</h4>
+                    <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                      Enabling maintenance mode will prevent customers from accessing the site. Admin users can still access the admin panel.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700">
+                <div className="flex items-center">
+                  <Wrench className="h-6 w-6 text-orange-600 dark:text-orange-400 mr-3" />
+                  <div>
+                    <h4 className="font-bold text-gray-900 dark:text-white">Enable Maintenance Mode</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Temporarily close the site for maintenance</p>
+                  </div>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.maintenance.enabled}
+                    onChange={(e) => updateNestedField('maintenance', 'enabled', e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-orange-600"></div>
+                </label>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Maintenance Title
+                </label>
+                <input
+                  type="text"
+                  value={formData.maintenance.title}
+                  onChange={(e) => updateNestedField('maintenance', 'title', e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-800 transition-all duration-200 font-medium"
+                  placeholder="🔧 We'll Be Right Back!"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Use emojis to make it friendly! 🛠️✨🚀</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Maintenance Message
+                </label>
+                <textarea
+                  value={formData.maintenance.message}
+                  onChange={(e) => updateNestedField('maintenance', 'message', e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-800 transition-all duration-200 font-medium"
+                  placeholder="We're currently performing scheduled maintenance to improve your experience. We'll be back online shortly. Thank you for your patience! 💙"
+                />
+              </div>
+
+              {formData.maintenance.enabled && (
+                <div className="bg-orange-50 dark:bg-orange-900/20 border-2 border-orange-200 dark:border-orange-800 rounded-xl p-4">
+                  <h4 className="font-bold text-orange-800 dark:text-orange-200 mb-3 flex items-center">
+                    <Wrench className="h-5 w-5 mr-2" />
+                    Preview
+                  </h4>
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-6 text-center border-2 border-orange-300 dark:border-orange-700">
+                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">{formData.maintenance.title}</h2>
+                    <p className="text-lg text-gray-600 dark:text-gray-400 whitespace-pre-wrap">{formData.maintenance.message}</p>
+                  </div>
+                </div>
+              )}
             </div>
           </SettingsSection>
 

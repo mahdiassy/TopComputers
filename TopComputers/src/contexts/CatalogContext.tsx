@@ -703,6 +703,11 @@ export function CatalogProvider({ children }: CatalogProviderProps) {
             emailOnLowStock: true,
             lowStockThreshold: 5
           },
+          maintenance: {
+            enabled: false,
+            title: '🔧 We\'ll Be Right Back!',
+            message: 'We\'re currently performing scheduled maintenance to improve your experience. We\'ll be back online shortly. Thank you for your patience! 💙'
+          },
           updatedAt: new Date()
         };
         const settingsRef = doc(db, 'siteSettings', 'main');

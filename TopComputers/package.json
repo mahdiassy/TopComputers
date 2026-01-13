@@ -5,10 +5,19 @@
   "description": "TopComputers e-commerce storefront with admin panel",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "vite --mode development",
+    "dev:staging": "vite --mode staging",
+    "build": "vite build --mode production",
+    "build:dev": "vite build --mode development",
+    "build:staging": "vite build --mode staging",
+    "build:prod": "vite build --mode production",
     "lint": "eslint .",
     "preview": "vite preview",
+    "preview:dev": "vite preview --mode development",
+    "preview:staging": "vite preview --mode staging",
+    "deploy:dev": "npm run build:dev && firebase deploy --only hosting,firestore:rules --project development",
+    "deploy:staging": "npm run build:staging && firebase deploy --only hosting,firestore:rules --project staging",
+    "deploy:prod": "npm run build:prod && firebase deploy --only hosting,firestore:rules --project production",
     "deploy:quick": "vite build && npx firebase-tools deploy --project topcomputers-69b82 --only hosting,firestore:rules --non-interactive"
   },
   "dependencies": {

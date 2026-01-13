@@ -6,7 +6,7 @@ import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-// Support separate Firebase projects for development and production
+// Support separate Firebase projects for development, staging, and production
 const mode = (import.meta as any).env?.MODE || 'development';
 
 // Helper to read env with fallback chain
@@ -18,42 +18,45 @@ const readEnv = (keys: string[], fallback?: string) => {
   return fallback;
 };
 
-// Prefer PRODUCTION vars when building for production, otherwise DEV vars
-const apiKey = readEnv(
-  mode === 'production'
-    ? ['VITE_PROD_FIREBASE_API_KEY', 'VITE_FIREBASE_API_KEY']
-    : ['VITE_DEV_FIREBASE_API_KEY', 'VITE_FIREBASE_API_KEY']
-);
-const projectId = readEnv(
-  mode === 'production'
-    ? ['VITE_PROD_FIREBASE_PROJECT_ID', 'VITE_FIREBASE_PROJECT_ID']
-    : ['VITE_DEV_FIREBASE_PROJECT_ID', 'VITE_FIREBASE_PROJECT_ID']
-);
-const messagingSenderId = readEnv(
-  mode === 'production'
-    ? ['VITE_PROD_FIREBASE_MESSAGING_SENDER_ID', 'VITE_FIREBASE_MESSAGING_SENDER_ID']
-    : ['VITE_DEV_FIREBASE_MESSAGING_SENDER_ID', 'VITE_FIREBASE_MESSAGING_SENDER_ID']
-);
-const appId = readEnv(
-  mode === 'production'
-    ? ['VITE_PROD_FIREBASE_APP_ID', 'VITE_FIREBASE_APP_ID']
-    : ['VITE_DEV_FIREBASE_APP_ID', 'VITE_FIREBASE_APP_ID']
-);
-const measurementId = readEnv(
-  mode === 'production'
-    ? ['VITE_PROD_FIREBASE_MEASUREMENT_ID', 'VITE_FIREBASE_MEASUREMENT_ID']
-    : ['VITE_DEV_FIREBASE_MEASUREMENT_ID', 'VITE_FIREBASE_MEASUREMENT_ID']
-);
-const authDomain = readEnv(
-  mode === 'production'
-    ? ['VITE_PROD_FIREBASE_AUTH_DOMAIN', 'VITE_FIREBASE_AUTH_DOMAIN']
-    : ['VITE_DEV_FIREBASE_AUTH_DOMAIN', 'VITE_FIREBASE_AUTH_DOMAIN']
-);
-let storageBucketEnv = readEnv(
-  mode === 'production'
-    ? ['VITE_PROD_FIREBASE_STORAGE_BUCKET', 'VITE_FIREBASE_STORAGE_BUCKET']
-    : ['VITE_DEV_FIREBASE_STORAGE_BUCKET', 'VITE_FIREBASE_STORAGE_BUCKET']
-) as string | undefined;
+// Determine environment prefix based on mode
+let envPrefix: string;
+if (mode === 'production') {
+  envPrefix = 'PROD';
+} else if (mode === 'staging') {
+  envPrefix = 'STAGING';
+} else {
+  envPrefix = 'DEV';
+}
+
+// Read config based on environment with fallback chain
+const apiKey = readEnv([
+  `VITE_${envPrefix}_FIREBASE_API_KEY`,
+  'VITE_FIREBASE_API_KEY'
+]);
+const projectId = readEnv([
+  `VITE_${envPrefix}_FIREBASE_PROJECT_ID`,
+  'VITE_FIREBASE_PROJECT_ID'
+]);
+const messagingSenderId = readEnv([
+  `VITE_${envPrefix}_FIREBASE_MESSAGING_SENDER_ID`,
+  'VITE_FIREBASE_MESSAGING_SENDER_ID'
+]);
+const appId = readEnv([
+  `VITE_${envPrefix}_FIREBASE_APP_ID`,
+  'VITE_FIREBASE_APP_ID'
+]);
+const measurementId = readEnv([
+  `VITE_${envPrefix}_FIREBASE_MEASUREMENT_ID`,
+  'VITE_FIREBASE_MEASUREMENT_ID'
+]);
+const authDomain = readEnv([
+  `VITE_${envPrefix}_FIREBASE_AUTH_DOMAIN`,
+  'VITE_FIREBASE_AUTH_DOMAIN'
+]);
+let storageBucketEnv = readEnv([
+  `VITE_${envPrefix}_FIREBASE_STORAGE_BUCKET`,
+  'VITE_FIREBASE_STORAGE_BUCKET'
+]) as string | undefined;
 
 if (!apiKey || !projectId || !appId) {
   throw new Error('[Firebase] Missing required environment variables. Configure .env files for dev/prod Firebase projects.');

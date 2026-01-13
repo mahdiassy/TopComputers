@@ -1,6 +1,9 @@
 {
   "projects": {
-    "default": "topcomputers-69b82"
+    "default": "topcomputers-69b82",
+    "development": "your-dev-project-id",
+    "staging": "your-staging-project-id",
+    "production": "topcomputers-69b82"
   },
   "targets": {},
   "etags": {}
