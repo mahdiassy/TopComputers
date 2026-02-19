@@ -165,12 +165,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const userPassword = password.trim();
       
       // Check for static admin credentials
-      if (username === 'mahdiassi' && userPassword === '11441144') {
+      if (username === 'topcomputers' && userPassword === '11441144') {
         // Create a mock user object for static admin
         const mockUser = {
           uid: 'static-admin-uid',
-          email: 'mahdiassi@admin.com',
-          displayName: 'mahdiassi',
+          email: 'topcomputers@admin.com',
+          displayName: 'topcomputers',
           photoURL: null,
           emailVerified: true,
           isAnonymous: false,
@@ -189,8 +189,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         
         // Set user data for static admin
         const adminUserData = {
-          username: 'mahdiassi',
-          email: 'mahdiassi@admin.com',
+          username: 'topcomputers',
+          email: 'topcomputers@admin.com',
           isAdmin: true,
           createdAt: new Date()
         };
@@ -273,8 +273,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         // Restore static admin session
         const mockUser = {
           uid: 'static-admin-uid',
-          email: 'mahdiassi@admin.com',
-          displayName: 'mahdiassi',
+          email: 'topcomputers@admin.com',
+          displayName: 'topcomputers',
           photoURL: null,
           emailVerified: true,
           isAnonymous: false,
@@ -292,8 +292,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         };
         
         const adminUserData = {
-          username: 'mahdiassi',
-          email: 'mahdiassi@admin.com',
+          username: 'topcomputers',
+          email: 'topcomputers@admin.com',
           isAdmin: true,
           createdAt: new Date()
         };

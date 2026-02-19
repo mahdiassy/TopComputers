@@ -25,7 +25,7 @@ const Login = () => {
       toast.success('Logged in successfully!');
       
       // Check if this is the admin user and redirect accordingly
-      if (emailOrUsername.trim() === 'mahdiassi' && password.trim() === '11441144') {
+      if (emailOrUsername.trim() === 'topcomputers' && password.trim() === '11441144') {
         navigate('/admin');
       } else {
         navigate('/');
@@ -119,12 +119,6 @@ const Login = () => {
 
           
           <div className="text-center">
-            <p className="text-sm text-secondary">
-              Admin Credentials Required
-            </p>
-            <p className="text-xs text-secondary mt-2">
-              Username: mahdiassi | Password: 11441144
-            </p>
             <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
               <a href="/" className="hover:underline">← Back to Store</a>
             </p>

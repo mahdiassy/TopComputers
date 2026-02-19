@@ -30,7 +30,7 @@ A modern, responsive e-commerce platform built with React, TypeScript, and Fireb
 ## 🔐 Admin Access
 
 ### Static Admin Credentials
-- **Username**: `mahdiassi`
+- **Username**: `topcomputers`
 - **Password**: `11441144`
 
 ### Accessing Admin Panel
