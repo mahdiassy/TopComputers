@@ -15,6 +15,13 @@ import { db } from '../config/firebase';
 import { useAuth } from './AuthContext';
 
 // COST OPTIMIZATION: Local interfaces to avoid import issues
+// Product variant for sizes with different prices
+interface ProductVariant {
+  id: string;
+  name: string;
+  price: string;
+}
+
 // Defining Product locally to avoid Vite module resolution issues
 interface Product {
   id: string;
@@ -23,8 +30,8 @@ interface Product {
   categoryId: string;
   brandId?: string; // Optional - products can exist without a brand
   sku: string;
-  price: number;
-  salePrice?: number;
+  price: string | number;
+  salePrice?: string | number;
   currency: string;
   stock: number;
   status: 'active' | 'inactive' | 'archived';
@@ -33,6 +40,7 @@ interface Product {
   images: string[];
   thumbnail: string;
   description?: string;
+  variants?: ProductVariant[]; // Size variants with prices
   createdAt: Date;
   updatedAt: Date;
 }
@@ -44,7 +52,9 @@ interface OrderItem {
   productTitle: string;
   productImage: string;
   quantity: number;
-  price: number;
+  price: string | number;
+  priceText: string; // Store original price text
+  selectedVariant?: ProductVariant; // Selected size variant
   totalPrice: number;
 }
 
@@ -99,9 +109,9 @@ interface CartContextType {
   isLoading: boolean;
   
   // Cart actions
-  addToCart: (product: Product, quantity?: number) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  addToCart: (product: Product, quantity?: number, variant?: ProductVariant) => void;
+  removeFromCart: (productId: string, variantId?: string) => void;
+  updateQuantity: (productId: string, quantity: number, variantId?: string) => void;
   clearCart: () => void;
   
   // Order actions
@@ -191,7 +201,12 @@ export function CartProvider({ children, products: propProducts = [] }: CartProv
         
         // Check if cart has expired (older than 30 minutes)
         if (currentTime - cartTimestamp < thirtyMinutes) {
-          setCart(parsedCart);
+          // Migrate old cart items to include priceText if missing
+          const migratedItems = parsedCart.items.map((item: OrderItem) => ({
+            ...item,
+            priceText: item.priceText || String(item.price), // Add priceText if missing
+          }));
+          setCart({ ...parsedCart, items: migratedItems });
           console.info('Cart loaded from localStorage with', parsedCart.items.length, 'items');
         } else {
           // Cart expired, clear it
@@ -269,12 +284,25 @@ export function CartProvider({ children, products: propProducts = [] }: CartProv
     return { subtotal, shippingFee, total, timestamp: Date.now() };
   }, []);
 
-  const addToCart = React.useCallback((product: Product, quantity: number = 1) => {
+  const addToCart = React.useCallback((product: Product, quantity: number = 1, variant?: ProductVariant) => {
     if (quantity <= 0) return;
     
     setCart(prevCart => {
-      const existingItemIndex = prevCart.items.findIndex(item => item.productId === product.id);
+      // For products with variants, use variant ID to differentiate; otherwise use product ID
+      const cartItemId = variant ? `${product.id}_${variant.id}` : product.id;
+      const existingItemIndex = prevCart.items.findIndex(item => {
+        if (variant) {
+          return item.productId === product.id && item.selectedVariant?.id === variant.id;
+        }
+        return item.productId === product.id && !item.selectedVariant;
+      });
+      
       let newItems: OrderItem[];
+      
+      // Get price from variant or product
+      const priceValue = variant ? variant.price : (product.salePrice || product.price);
+      const priceNum = typeof priceValue === 'string' ? parseFloat(priceValue) || 0 : priceValue;
+      const priceText = String(priceValue);
       
       if (existingItemIndex >= 0) {
         // Update existing item
@@ -291,7 +319,7 @@ export function CartProvider({ children, products: propProducts = [] }: CartProv
         newItems[existingItemIndex] = {
           ...existingItem,
           quantity: newQuantity,
-          totalPrice: newQuantity * product.price,
+          totalPrice: newQuantity * priceNum,
         };
       } else {
         // Add new item
@@ -306,8 +334,10 @@ export function CartProvider({ children, products: propProducts = [] }: CartProv
           productTitle: product.title,
           productImage: product.thumbnail || product.images[0] || '',
           quantity,
-          price: product.salePrice || product.price,
-          totalPrice: (product.salePrice || product.price) * quantity,
+          price: priceNum,
+          priceText, // Store original price as text
+          selectedVariant: variant, // Store selected variant
+          totalPrice: priceNum * quantity,
         };
         newItems = [...prevCart.items, newItem];
       }
@@ -321,9 +351,14 @@ export function CartProvider({ children, products: propProducts = [] }: CartProv
     });
   }, [recalculateCart]);
 
-  const removeFromCart = React.useCallback((productId: string) => {
+  const removeFromCart = React.useCallback((productId: string, variantId?: string) => {
     setCart(prevCart => {
-      const newItems = prevCart.items.filter(item => item.productId !== productId);
+      const newItems = prevCart.items.filter(item => {
+        if (variantId) {
+          return !(item.productId === productId && item.selectedVariant?.id === variantId);
+        }
+        return !(item.productId === productId && !item.selectedVariant);
+      });
       const calculations = recalculateCart(newItems);
       
       return {
@@ -333,9 +368,9 @@ export function CartProvider({ children, products: propProducts = [] }: CartProv
     });
   }, [recalculateCart]);
 
-  const updateQuantity = React.useCallback((productId: string, quantity: number) => {
+  const updateQuantity = React.useCallback((productId: string, quantity: number, variantId?: string) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(productId, variantId);
       return;
     }
     
@@ -352,11 +387,17 @@ export function CartProvider({ children, products: propProducts = [] }: CartProv
     }
     
     setCart(prevCart => {
-      const newItems = prevCart.items.map(item => 
-        item.productId === productId 
-          ? { ...item, quantity, totalPrice: quantity * item.price }
-          : item
-      );
+      const newItems = prevCart.items.map(item => {
+        const isMatch = variantId 
+          ? (item.productId === productId && item.selectedVariant?.id === variantId)
+          : (item.productId === productId && !item.selectedVariant);
+        
+        if (isMatch) {
+          const priceNum = typeof item.price === 'string' ? parseFloat(item.price) || 0 : item.price;
+          return { ...item, quantity, totalPrice: quantity * priceNum };
+        }
+        return item;
+      });
       
       const calculations = recalculateCart(newItems);
       

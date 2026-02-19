@@ -21,8 +21,10 @@ interface ProductCardProps {
 }
 
 function ProductCard({ product, view, onAddToCart }: ProductCardProps & { onAddToCart: (product: Product) => void }) {
-  const discountPercentage = product.salePrice 
-    ? Math.round(((product.price - product.salePrice) / product.price) * 100)
+  const priceNum = typeof product.price === 'string' ? parseFloat(product.price) || 0 : product.price;
+  const salePriceNum = product.salePrice ? (typeof product.salePrice === 'string' ? parseFloat(product.salePrice as string) || 0 : product.salePrice) : 0;
+  const discountPercentage = salePriceNum && priceNum > 0
+    ? Math.round(((priceNum - salePriceNum) / priceNum) * 100)
     : 0;
   const [hasImage, setHasImage] = useState<boolean>(Boolean(product.thumbnail));
   const [isButtonPressed, setIsButtonPressed] = useState(false);
@@ -88,15 +90,15 @@ function ProductCard({ product, view, onAddToCart }: ProductCardProps & { onAddT
                 {product.salePrice && product.salePrice < product.price ? (
                   <>
                     <span className="text-xl font-bold text-red-600 dark:text-red-400">
-                      ${product.salePrice}
+                      {product.salePrice}$
                     </span>
                     <span className="text-sm text-gray-500 dark:text-gray-400 line-through">
-                      ${product.price}
+                      {product.price}$
                     </span>
                   </>
                 ) : (
                   <span className="text-xl font-bold text-gray-900 dark:text-white">
-                    ${product.salePrice || product.price}
+                    {product.salePrice || product.price}$
                   </span>
                 )}
               </div>
@@ -173,15 +175,15 @@ function ProductCard({ product, view, onAddToCart }: ProductCardProps & { onAddT
                 {product.salePrice && product.salePrice < product.price ? (
                   <>
                     <span className="text-xs sm:text-sm font-bold text-red-600 dark:text-red-400">
-                      ${product.salePrice}
+                      {product.salePrice}$
                     </span>
                     <span className="text-xs text-gray-500 dark:text-gray-400 line-through">
-                      ${product.price}
+                      {product.price}$
                     </span>
                   </>
                 ) : (
                   <span className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">
-                    ${product.salePrice || product.price}
+                    {product.salePrice || product.price}$
                   </span>
                 )}
               </div>
@@ -600,9 +602,10 @@ export default function CatalogPage() {
       );
     }
 
-    // Filter by price range
+    // Filter by price range - handle both string and number prices
     filtered = filtered.filter(product => {
-      const price = product.salePrice || product.price;
+      const priceValue = product.salePrice || product.price;
+      const price = typeof priceValue === 'string' ? parseFloat(priceValue) || 0 : priceValue;
       return price >= filters.priceRange[0] && price <= filters.priceRange[1];
     });
 
@@ -623,13 +626,21 @@ export default function CatalogPage() {
       );
     }
 
-    // Sort products
+    // Sort products - handle both string and number prices
     switch (sortBy) {
       case 'price-low':
-        filtered.sort((a, b) => (a.salePrice || a.price) - (b.salePrice || b.price));
+        filtered.sort((a, b) => {
+          const priceA = typeof (a.salePrice || a.price) === 'string' ? parseFloat(String(a.salePrice || a.price)) || 0 : Number(a.salePrice || a.price) || 0;
+          const priceB = typeof (b.salePrice || b.price) === 'string' ? parseFloat(String(b.salePrice || b.price)) || 0 : Number(b.salePrice || b.price) || 0;
+          return priceA - priceB;
+        });
         break;
       case 'price-high':
-        filtered.sort((a, b) => (b.salePrice || b.price) - (a.salePrice || a.price));
+        filtered.sort((a, b) => {
+          const priceA = typeof (a.salePrice || a.price) === 'string' ? parseFloat(String(a.salePrice || a.price)) || 0 : Number(a.salePrice || a.price) || 0;
+          const priceB = typeof (b.salePrice || b.price) === 'string' ? parseFloat(String(b.salePrice || b.price)) || 0 : Number(b.salePrice || b.price) || 0;
+          return priceB - priceA;
+        });
         break;
       case 'name':
         filtered.sort((a, b) => a.title.localeCompare(b.title));

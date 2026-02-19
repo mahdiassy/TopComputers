@@ -19,8 +19,8 @@ interface Product {
   categoryId: string;
   brandId?: string; // Optional - products can exist without a brand
   sku: string;
-  price: number;
-  salePrice?: number;
+  price: string | number;
+  salePrice?: string | number;
   currency: string;
   stock: number;
   status: 'active' | 'inactive' | 'archived';
@@ -46,6 +46,13 @@ interface SavedDetails extends CustomerDetails {
 
 import toast from 'react-hot-toast';
 
+// Product variant for sizes with different prices
+interface ProductVariant {
+  id: string;
+  name: string;
+  price: string;
+}
+
 // OrderItem interface for cart items
 interface OrderItem {
   productId: string;
@@ -54,12 +61,15 @@ interface OrderItem {
   productImage: string;
   quantity: number;
   price: number;
+  priceText?: string; // Original price text
+  selectedVariant?: ProductVariant; // Selected size variant
   totalPrice: number;
 }
 
 interface WhatsAppOrderFormProps {
   product?: Product; // Optional for single product orders
   quantity?: number; // Optional for single product orders
+  selectedVariant?: ProductVariant; // Optional selected variant
   cartItems?: OrderItem[]; // Optional for cart orders
   cartTotal?: number; // Optional for cart orders
   cartSubtotal?: number; // Optional for cart orders
@@ -181,9 +191,10 @@ export default function WhatsAppOrderForm({
         // Cart order with multiple products
         totalPrice = cartTotal || 0;
         
-        const productsList = cartItems.map(item => 
-          `📱 ${item.productTitle}\n   $${item.price.toFixed(2)} × ${item.quantity} = $${item.totalPrice.toFixed(2)}\n   🔗 Link: ${window.location.origin}/product/${item.productSlug}`
-        ).join('\n\n');
+        const productsList = cartItems.map(item => {
+          const sizeInfo = item.selectedVariant ? `\n   📏 Size: ${item.selectedVariant.name}` : '';
+          return `📱 ${item.productTitle}${sizeInfo}\n   ${item.priceText || item.price}$ × ${item.quantity} = ${item.totalPrice}$\n   🔗 Link: ${window.location.origin}/product/${item.productSlug}`;
+        }).join('\n\n');
 
         orderDetails = `
 🛒 *New Cart Order*
@@ -193,9 +204,9 @@ export default function WhatsAppOrderForm({
 ${productsList}
 
 💰 *Order Summary:*
-• Subtotal: $${cartSubtotal?.toFixed(2) || '0.00'}
+• Subtotal: ${cartSubtotal || 0}$
 • Shipping: To be confirmed by our team
-• *Estimated Total (excl. delivery): $${(cartSubtotal || 0).toFixed(2)}*
+• *Total: ${cartSubtotal || 0}$*
 
 👤 *Customer Details:*
 • Name: ${customerDetails.fullName}
@@ -209,16 +220,18 @@ ${promoCode ? `🎟️ *Promo Code:* ${promoCode}` : ''}
 _Order placed via TopComputers website_
         `.trim();
       } else if (product && quantity) {
-        // Single product order
-        totalPrice = (product.salePrice || product.price) * quantity;
+        // Single product order - keep price as text
+        const priceText = product.salePrice || product.price;
+        const priceNum = typeof priceText === 'string' ? parseFloat(priceText) || 0 : priceText;
+        totalPrice = priceNum * quantity;
         
         orderDetails = `
 🛒 *New Order Request*
 
 📱 *Product:* ${product.title}
-💰 *Price:* $${product.salePrice || product.price} each
+💰 *Price:* ${priceText}$ each
 📦 *Quantity:* ${quantity}
-💳 *Estimated Total (excl. delivery):* $${totalPrice.toFixed(2)}
+💳 *Total:* ${typeof priceText === 'string' ? priceText : priceText}$ × ${quantity} = ${totalPrice}$
 
 👤 *Customer Details:*
 • Name: ${customerDetails.fullName}

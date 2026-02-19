@@ -249,7 +249,7 @@ export default function StorefrontLayout({ onSecretGesture }: StorefrontLayoutPr
                   <div className="p-6">
                     <div className="space-y-4">
                       {cart.items.map((item) => (
-                        <div key={item.productId} className="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700/50 border dark:border-gray-600 rounded-lg hover:shadow-md dark:hover:shadow-blue-500/20 transition-all duration-200">
+                        <div key={`${item.productId}_${item.selectedVariant?.id || 'default'}`} className="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700/50 border dark:border-gray-600 rounded-lg hover:shadow-md dark:hover:shadow-blue-500/20 transition-all duration-200">
                           <img
                             src={item.productImage}
                             alt={item.productTitle}
@@ -259,21 +259,26 @@ export default function StorefrontLayout({ onSecretGesture }: StorefrontLayoutPr
                             <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                               {item.productTitle}
                             </h4>
+                            {item.selectedVariant && (
+                              <p className="text-xs text-blue-600 dark:text-orange-400 font-medium">
+                                Size: {item.selectedVariant.name}
+                              </p>
+                            )}
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                              ${item.price.toFixed(2)}
+                              {item.priceText || item.price}$
                             </p>
                             
                             {/* Quantity Controls */}
                             <div className="flex items-center space-x-2 mt-2">
                               <button
-                                onClick={() => updateQuantity(item.productId, Math.max(0, item.quantity - 1))}
+                                onClick={() => updateQuantity(item.productId, Math.max(0, item.quantity - 1), item.selectedVariant?.id)}
                                 className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 rounded transition-colors"
                               >
                                 <Minus className="h-4 w-4" />
                               </button>
                               <span className="text-sm font-medium px-2 dark:text-gray-200">{item.quantity}</span>
                               <button
-                                onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                                onClick={() => updateQuantity(item.productId, item.quantity + 1, item.selectedVariant?.id)}
                                 className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 rounded transition-colors"
                               >
                                 <Plus className="h-4 w-4" />
@@ -283,10 +288,10 @@ export default function StorefrontLayout({ onSecretGesture }: StorefrontLayoutPr
                           
                           <div className="text-right">
                             <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                              ${item.totalPrice.toFixed(2)}
+                              {item.priceText || item.price}$
                             </p>
                             <button
-                              onClick={() => removeFromCart(item.productId)}
+                              onClick={() => removeFromCart(item.productId, item.selectedVariant?.id)}
                               className="mt-1 p-1 text-red-400 dark:text-red-500 hover:text-red-600 dark:hover:text-red-400 rounded transition-colors"
                             >
                               <Trash2 className="h-4 w-4" />

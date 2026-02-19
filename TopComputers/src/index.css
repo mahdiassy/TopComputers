@@ -2,6 +2,51 @@
 
 @variant dark (&:where(.dark, .dark *));
 
+/* Scrollbar at top for horizontal scrolling tables */
+.scrollbar-top {
+  transform: rotateX(180deg);
+}
+.scrollbar-top > * {
+  transform: rotateX(180deg);
+}
+
+/* Always show horizontal scrollbar */
+.overflow-x-auto {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+  height: 8px;
+  display: block !important;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #e5e7eb;
+  border-radius: 4px;
+}
+
+.dark .overflow-x-auto::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+.dark .overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #6b7280;
+}
+
+.dark .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-synthesis: none;

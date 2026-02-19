@@ -19,6 +19,13 @@ export interface Brand {
   updatedAt: Date;
 }
 
+// Product variant for sizes with different prices
+export interface ProductVariant {
+  id: string;
+  name: string; // e.g., "35 cm", "38 cm", "Large"
+  price: string; // Price as text
+}
+
 export interface Product {
   id: string;
   title: string;
@@ -27,8 +34,8 @@ export interface Product {
   brandId?: string; // Optional - products can exist without a brand
   supplierId?: string; // Optional - products can exist without a supplier
   sku: string;
-  price: number;
-  salePrice?: number;
+  price: string | number;
+  salePrice?: string | number;
   currency: string;
   stock: number;
   status: 'active' | 'inactive' | 'archived';
@@ -37,6 +44,7 @@ export interface Product {
   images: string[];
   thumbnail: string;
   description?: string;
+  variants?: ProductVariant[]; // Optional size variants with prices
   createdAt: Date;
   updatedAt: Date;
 }

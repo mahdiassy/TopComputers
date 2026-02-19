@@ -53,10 +53,10 @@ function ProductTable({ products, onEdit, onDelete, onViewDetails, onArchive, on
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'inactive': return 'bg-yellow-100 text-yellow-800';
-      case 'archived': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'active': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
+      case 'inactive': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300';
+      case 'archived': return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
     }
   };
 
@@ -67,38 +67,166 @@ function ProductTable({ products, onEdit, onDelete, onViewDetails, onArchive, on
     return { icon: CheckCircle, color: 'text-green-500', text: 'In Stock' };
   };
 
+  // Format price - handle both string and number
+  const formatPrice = (price: string | number) => {
+    if (typeof price === 'string') {
+      return price;
+    }
+    return price.toString();
+  };
+
   return (
     <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gradient-to-r from-blue-600 to-indigo-600">
-            <tr>
-              <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                Product
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                Category
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                Brand
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                Supplier
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                Price
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                Stock
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-4 text-right text-xs font-bold text-white uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
+      {/* Mobile Card View - only on small screens */}
+      <div className="block md:hidden">
+        <div className="divide-y divide-gray-200 dark:divide-gray-700">
+          {products.map((product) => {
+            const stockStatus = getStockStatus(product.stock);
+            const StockIcon = stockStatus.icon;
+            
+            return (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+              >
+                <div className="flex items-start gap-3">
+                  {/* Product Image */}
+                  <div className="h-16 w-16 flex-shrink-0 rounded-lg overflow-hidden shadow-md border-2 border-gray-200 dark:border-gray-600">
+                    <img
+                      className="h-full w-full object-cover bg-white dark:bg-gray-800"
+                      src={product.thumbnail}
+                      alt={product.title}
+                    />
+                  </div>
+                  
+                  {/* Product Info */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                      {product.title}
+                    </h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      SKU: {product.sku}
+                    </p>
+                    
+                    {/* Price and Status Row */}
+                    <div className="flex flex-wrap items-center gap-2 mt-2">
+                      <div className="flex items-center gap-1">
+                        {product.salePrice ? (
+                          <>
+                            <span className="text-sm font-bold text-red-600 dark:text-red-400">{formatPrice(product.salePrice)}$</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400 line-through">{formatPrice(product.price)}$</span>
+                          </>
+                        ) : (
+                          <span className="text-sm font-bold text-gray-900 dark:text-white">{formatPrice(product.price)}$</span>
+                        )}
+                      </div>
+                      <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${getStatusColor(product.status)}`}>
+                        {product.status}
+                      </span>
+                    </div>
+                    
+                    {/* Category and Stock */}
+                    <div className="flex flex-wrap items-center gap-2 mt-2">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                        {getCategoryName(product.categoryId)}
+                      </span>
+                      <div className="flex items-center">
+                        <StockIcon className={`h-4 w-4 mr-1 ${stockStatus.color}`} />
+                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                          {product.stock}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Action Buttons */}
+                <div className="flex items-center justify-end gap-2 mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                  <button
+                    onClick={() => onViewDetails(product)}
+                    className="p-2 rounded-lg bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-800/50 text-blue-600 dark:text-blue-400 transition-all"
+                    title="View"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => onEdit(product)}
+                    className="p-2 rounded-lg bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-800/50 text-green-600 dark:text-green-400 transition-all"
+                    title="Edit"
+                  >
+                    <Edit2 className="h-4 w-4" />
+                  </button>
+                  {product.status === 'archived' ? (
+                    <button
+                      onClick={() => onUnarchive(product)}
+                      className="p-2 rounded-lg bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-800/50 text-blue-600 dark:text-blue-400 transition-all"
+                      title="Unarchive"
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => onArchive(product)}
+                      className="p-2 rounded-lg bg-orange-100 hover:bg-orange-200 dark:bg-orange-900/30 dark:hover:bg-orange-800/50 text-orange-600 dark:text-orange-400 transition-all"
+                      title="Archive"
+                    >
+                      <Archive className="h-4 w-4" />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => onDelete(product)}
+                    className="p-2 rounded-lg bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-800/50 text-red-600 dark:text-red-400 transition-all"
+                    title="Delete"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+      
+      {/* Tablet & Desktop Table View with always-visible scrollbar */}
+      <div className="hidden md:block">
+        {/* Horizontal scroll indicator at top */}
+        <div className="bg-gray-100 dark:bg-gray-700 px-4 py-2 text-xs text-gray-500 dark:text-gray-400 flex items-center justify-between border-b border-gray-200 dark:border-gray-600">
+          <span>← Swipe or scroll to see all columns →</span>
+          <span className="font-medium">{products.length} products</span>
+        </div>
+        <div className="overflow-x-auto" style={{ overflowX: 'scroll' }}>
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700" style={{ minWidth: '900px' }}>
+            <thead className="bg-gradient-to-r from-blue-600 to-indigo-600">
+              <tr>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                    Product
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                    Category
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                    Brand
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                    Supplier
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                    Price
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                    Stock
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-4 text-right text-xs font-bold text-white uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {products.map((product) => {
               const stockStatus = getStockStatus(product.stock);
@@ -150,11 +278,11 @@ function ProductTable({ products, onEdit, onDelete, onViewDetails, onArchive, on
                     <div className="flex flex-col">
                       {product.salePrice ? (
                         <>
-                          <span className="text-lg font-bold text-red-600 dark:text-red-400">${product.salePrice}</span>
-                          <span className="text-sm text-gray-500 dark:text-gray-400 line-through">${product.price}</span>
+                          <span className="text-lg font-bold text-red-600 dark:text-red-400">{formatPrice(product.salePrice)}$</span>
+                          <span className="text-sm text-gray-500 dark:text-gray-400 line-through">{formatPrice(product.price)}$</span>
                         </>
                       ) : (
-                        <span className="text-lg font-bold text-gray-900 dark:text-white">${product.price}</span>
+                        <span className="text-lg font-bold text-gray-900 dark:text-white">{formatPrice(product.price)}$</span>
                       )}
                     </div>
                   </td>
@@ -172,7 +300,7 @@ function ProductTable({ products, onEdit, onDelete, onViewDetails, onArchive, on
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex items-center justify-end space-x-3">
+                    <div className="flex items-center justify-end space-x-2">
                       <button
                         onClick={() => onViewDetails(product)}
                         className="p-2 rounded-lg bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-800/50 text-blue-600 dark:text-blue-400 transition-all duration-200 hover:scale-110"
@@ -218,6 +346,7 @@ function ProductTable({ products, onEdit, onDelete, onViewDetails, onArchive, on
             })}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
@@ -575,38 +704,38 @@ export default function AdminProducts() {
 
       {/* Product Details Modal */}
       {detailsProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
           <div className="absolute inset-0 backdrop-blur-md bg-black/20" onClick={handleCloseDetails} />
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+            className="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto"
           >
-            <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Product Details</h2>
+            <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between z-10">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Product Details</h2>
               <button
                 onClick={handleCloseDetails}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 p-1"
               >
-                <X className="h-6 w-6" />
+                <X className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
             </div>
-            <div className="p-6 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div className="space-y-3">
                   <img
                     src={detailsProduct.images?.[selectedImageIndex] || detailsProduct.thumbnail || ''}
                     alt={detailsProduct.title}
-                    className="w-full h-56 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
+                    className="w-full h-48 sm:h-56 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
                   />
                   {detailsProduct.images?.length > 1 && (
-                    <div className="grid grid-cols-5 gap-2">
+                    <div className="grid grid-cols-5 gap-1 sm:gap-2">
                       {detailsProduct.images.slice(0, 10).map((img, i) => (
                         <button
                           key={i}
                           onClick={() => setSelectedImageIndex(i)}
-                          className={`h-16 w-full object-cover rounded border-2 transition-all duration-200 ${
+                          className={`h-12 sm:h-16 w-full object-cover rounded border-2 transition-all duration-200 ${
                             i === selectedImageIndex
                               ? 'border-blue-500 ring-2 ring-blue-200'
                               : 'border-gray-200 dark:border-gray-700 hover:border-gray-400'
@@ -623,19 +752,19 @@ export default function AdminProducts() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{detailsProduct.title}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">SKU: {detailsProduct.sku}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Category: {categories.find(c => c.id === detailsProduct.categoryId)?.name || '—'}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Brand: {detailsProduct.brandId ? (brands.find(b => b.id === detailsProduct.brandId)?.name || '—') : 'No Brand'}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Supplier: {detailsProduct.supplierId ? (suppliers.find(s => s.id === detailsProduct.supplierId)?.name || '—') : 'No Supplier'}</p>
-                  <div className="flex items-center gap-3 pt-2 flex-wrap">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">{detailsProduct.title}</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">SKU: {detailsProduct.sku}</p>
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Category: {categories.find(c => c.id === detailsProduct.categoryId)?.name || '—'}</p>
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Brand: {detailsProduct.brandId ? (brands.find(b => b.id === detailsProduct.brandId)?.name || '—') : 'No Brand'}</p>
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Supplier: {detailsProduct.supplierId ? (suppliers.find(s => s.id === detailsProduct.supplierId)?.name || '—') : 'No Supplier'}</p>
+                  <div className="flex items-center gap-2 sm:gap-3 pt-2 flex-wrap">
                     {detailsProduct.salePrice ? (
                       <>
-                        <span className="text-xl font-bold text-red-600">${detailsProduct.salePrice}</span>
-                        <span className="text-sm text-gray-500 line-through">${detailsProduct.price}</span>
+                        <span className="text-lg sm:text-xl font-bold text-red-600">{detailsProduct.salePrice}$</span>
+                        <span className="text-xs sm:text-sm text-gray-500 line-through">{detailsProduct.price}$</span>
                       </>
                     ) : (
-                      <span className="text-xl font-bold">${detailsProduct.price}</span>
+                      <span className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">{detailsProduct.price}$</span>
                     )}
                     <span className="text-sm px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">Stock: {detailsProduct.stock}</span>
                     <span className="text-sm px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">Status: {detailsProduct.status}</span>
@@ -682,7 +811,7 @@ function ProductForm({ product, isOpen, onClose }: ProductFormProps) {
     categoryId: product?.categoryId || '',
     brandId: product?.brandId || '',
     supplierId: product?.supplierId || '',
-    price: product?.price || '',
+    price: String(product?.price || ''), // Always convert to string
     currency: product?.currency || 'USD',
     stock: product?.stock || '',
     status: product?.status || 'active' as const,
@@ -690,6 +819,11 @@ function ProductForm({ product, isOpen, onClose }: ProductFormProps) {
     description: product?.description || '',
     specs: Object.entries(product?.specs || {}).map(([key, value]) => ({ key, value }))
   });
+  
+  // Size variants state
+  const [variants, setVariants] = useState<{ id: string; name: string; price: string }[]>(
+    product?.variants || []
+  );
   
   const [images, setImages] = useState<string[]>(product?.images || []);
   const [thumbnail, setThumbnail] = useState(product?.thumbnail || '');
@@ -716,7 +850,7 @@ function ProductForm({ product, isOpen, onClose }: ProductFormProps) {
         categoryId: product.categoryId || '',
         brandId: product.brandId || '',
         supplierId: product.supplierId || '',
-        price: product.price || '',
+        price: String(product.price || ''), // Always convert to string
         currency: product.currency || 'USD',
         stock: product.stock || '',
         status: product.status || 'active',
@@ -724,6 +858,7 @@ function ProductForm({ product, isOpen, onClose }: ProductFormProps) {
         description: product.description || '',
         specs: Object.entries(product.specs || {}).map(([key, value]) => ({ key, value }))
       });
+      setVariants(product.variants || []);
       setImages(product.images || []);
       setThumbnail(product.thumbnail || '');
     } else {
@@ -731,10 +866,18 @@ function ProductForm({ product, isOpen, onClose }: ProductFormProps) {
         title: '', slug: '', sku: '', categoryId: '', brandId: '', supplierId: '', price: '',
         currency: 'USD', stock: '', status: 'active', tags: '', description: '', specs: []
       });
+      setVariants([]);
       setImages([]);
       setThumbnail('');
     }
   }, [isOpen, product]);
+
+  // Auto-update thumbnail when images change
+  useEffect(() => {
+    if (images.length > 0 && !thumbnail) {
+      setThumbnail(images[0]);
+    }
+  }, [images, thumbnail]);
 
   // Auto-generate SKU for new products
   useEffect(() => {
@@ -814,10 +957,14 @@ const handleImageUpload = async (file: File) => {
       console.log('Form: Calling uploadProductImage with uploadId:', uploadId);
       const imageUrl = await uploadProductImage(file, uploadId);
       console.log('Form: Image uploaded successfully, URL:', imageUrl);
-      setImages(prev => [...prev, imageUrl]);
-      if (!thumbnail) {
-        setThumbnail(imageUrl);
-      }
+      setImages(prev => {
+        const newImages = [...prev, imageUrl];
+        // Update thumbnail to the first image (most recent upload if it's the first one)
+        if (newImages.length === 1 || !thumbnail) {
+          setThumbnail(imageUrl);
+        }
+        return newImages;
+      });
     } catch (error) {
       console.error('Form: Error uploading image:', error);
       alert('Failed to upload image. Please try again.');
@@ -849,6 +996,9 @@ const handleImageUpload = async (file: File) => {
         return acc;
       }, {} as Record<string, string>);
       
+      // Filter out empty variants
+      const validVariants = variants.filter(v => v.name.trim() && v.price.trim());
+      
       const productData = {
         title: formData.title.trim(),
         slug,
@@ -856,15 +1006,16 @@ const handleImageUpload = async (file: File) => {
         categoryId: formData.categoryId,
         brandId: formData.brandId,
         supplierId: formData.supplierId,
-        price: parseFloat(String(formData.price)) || 0,
+        price: formData.price,
         currency: formData.currency,
         stock: parseInt(String(formData.stock)) || 0,
         status: formData.status,
         tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
         description: formData.description.trim(),
         specs,
+        variants: validVariants, // Include size variants
         images,
-        thumbnail: thumbnail || images[0] || ''
+        thumbnail: images[0] || thumbnail || '' // Always use first image as thumbnail
       };
 
       if (product) {
@@ -935,40 +1086,40 @@ const handleImageUpload = async (file: File) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
       <div className="absolute inset-0 backdrop-blur-md bg-black/20" onClick={onClose} />
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+        className="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto"
       >
-        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 sm:py-4 z-10">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
               {product ? 'Edit Product' : 'Add Product'}
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 p-1"
             >
-              <X className="h-6 w-6" />
+              <X className="h-5 w-5 sm:h-6 sm:w-6" />
             </button>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
           {/* Basic Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
                 Product Title *
               </label>
               <input
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                 required
               />
             </div>
@@ -1114,16 +1265,20 @@ const handleImageUpload = async (file: File) => {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Price *
               </label>
-              <input
-                type="number"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || '' })}
-                onFocus={(e) => e.target.select()}
-                min="0"
-                step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                required
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={formData.price}
+                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                  onFocus={(e) => e.target.select()}
+                  placeholder="0.00"
+                  className="w-full px-3 py-2 pr-8 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  required
+                />
+                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 font-medium">
+                  $
+                </span>
+              </div>
             </div>
 
             <div>
@@ -1152,6 +1307,73 @@ const handleImageUpload = async (file: File) => {
               rows={4}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
+          </div>
+
+          {/* Size Variants (Optional) */}
+          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/50">
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Size Variants (Optional)
+              </label>
+              <button
+                type="button"
+                onClick={() => setVariants([...variants, { id: Date.now().toString(), name: '', price: '' }])}
+                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium flex items-center gap-1"
+              >
+                <Plus className="h-4 w-4" />
+                Add Size
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+              Add different sizes with their own prices. Leave empty if product has no size options.
+            </p>
+            
+            {variants.length === 0 ? (
+              <p className="text-sm text-gray-400 dark:text-gray-500 italic text-center py-2">
+                No size variants added. Click "Add Size" to add one.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {variants.map((variant, index) => (
+                  <div key={variant.id} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={variant.name}
+                      onChange={(e) => {
+                        const newVariants = [...variants];
+                        newVariants[index].name = e.target.value;
+                        setVariants(newVariants);
+                      }}
+                      placeholder="Size name (e.g., 35 cm, Large)"
+                      className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                    />
+                    <div className="relative flex-1">
+                      <input
+                        type="text"
+                        value={variant.price}
+                        onChange={(e) => {
+                          const newVariants = [...variants];
+                          newVariants[index].price = e.target.value;
+                          setVariants(newVariants);
+                        }}
+                        placeholder="Price"
+                        className="w-full px-3 py-2 pr-8 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                      />
+                      <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 text-sm">
+                        $
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setVariants(variants.filter((_, i) => i !== index))}
+                      className="p-2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Tags */}
@@ -1184,18 +1406,18 @@ const handleImageUpload = async (file: File) => {
               required
             />
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-4 mt-4">
               {images.map((image, index) => (
                 <div key={index} className="relative">
                   <img
                     src={image}
                     alt={`Product ${index + 1}`}
-                    className="w-full h-24 object-cover rounded-lg border border-gray-300 dark:border-gray-600"
+                    className="w-full h-20 sm:h-24 object-cover rounded-lg border border-gray-300 dark:border-gray-600"
                   />
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-all duration-300"
+                    className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-red-500 text-white rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-all duration-300"
                   >
                     ×
                   </button>
@@ -1218,7 +1440,7 @@ const handleImageUpload = async (file: File) => {
 
           {/* Specifications */}
           <div>
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Specifications
               </label>
@@ -1233,25 +1455,25 @@ const handleImageUpload = async (file: File) => {
             
             <div className="space-y-3">
               {formData.specs.map((spec, index) => (
-                <div key={index} className="flex gap-3 items-center">
+                <div key={index} className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch sm:items-center">
                   <input
                     type="text"
                     value={spec.key}
                     onChange={(e) => updateSpec(index, 'key', e.target.value)}
                     placeholder="Property (e.g., RAM)"
-                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                   />
                   <input
                     type="text"
                     value={spec.value}
                     onChange={(e) => updateSpec(index, 'value', e.target.value)}
                     placeholder="Value (e.g., 16GB DDR4)"
-                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                   />
                   <button
                     type="button"
                     onClick={() => removeSpec(index)}
-                    className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 p-2"
+                    className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 p-2 self-end sm:self-auto"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -1261,18 +1483,18 @@ const handleImageUpload = async (file: File) => {
           </div>
 
           {/* Form Actions */}
-          <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-4 sm:pt-6 border-t border-gray-200 dark:border-gray-700">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              className="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving || uploading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {saving ? 'Saving...' : product ? 'Update Product' : 'Create Product'}
             </button>

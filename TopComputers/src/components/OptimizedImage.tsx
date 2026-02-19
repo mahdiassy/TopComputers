@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { ImageComposition } from '../utils/imageComposition';
 
 interface OptimizedImageProps {
   src: string;
@@ -10,6 +11,7 @@ interface OptimizedImageProps {
   loading?: 'lazy' | 'eager';
   quality?: 'low' | 'medium' | 'high';
   placeholder?: string;
+  useDefaultBackground?: boolean; // Use default background as fallback
 }
 
 export default function OptimizedImage({
@@ -20,13 +22,17 @@ export default function OptimizedImage({
   fallbackIcon,
   loading = 'lazy',
   quality = 'medium',
-  placeholder
+  placeholder,
+  useDefaultBackground = true
 }: OptimizedImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isInView, setIsInView] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Use default background if no src is provided
+  const imageSrc = src || (useDefaultBackground ? ImageComposition.getDefaultBackgroundUrl() : '');
 
   // Intersection Observer for lazy loading
   useEffect(() => {
@@ -53,11 +59,11 @@ export default function OptimizedImage({
   }, [loading]);
 
   // Performance optimization: Generate blur placeholder
-  const generateBlurPlaceholder = (src: string): string => {
+  const generateBlurPlaceholder = (imgSrc: string): string => {
     if (placeholder) return placeholder;
     
     // Create a simple gradient placeholder based on image hash
-    const hash = src.split('').reduce((a, b) => {
+    const hash = imgSrc.split('').reduce((a, b) => {
       a = ((a << 5) - a) + b.charCodeAt(0);
       return a & a;
     }, 0);
@@ -92,7 +98,7 @@ export default function OptimizedImage({
       ref={containerRef}
       className={`relative overflow-hidden ${containerClassName}`}
       style={{
-        background: isLoaded ? 'transparent' : generateBlurPlaceholder(src)
+        background: isLoaded ? 'transparent' : generateBlurPlaceholder(imageSrc)
       }}
     >
       {isInView && (
@@ -107,7 +113,15 @@ export default function OptimizedImage({
           {/* Error fallback */}
           {hasError && (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700">
-              {fallbackIcon || (
+              {useDefaultBackground ? (
+                <img
+                  src={ImageComposition.getDefaultBackgroundUrl()}
+                  alt="Default background"
+                  className="w-full h-full object-cover"
+                />
+              ) : fallbackIcon ? (
+                fallbackIcon
+              ) : (
                 <div className="w-12 h-12 text-gray-400">
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
@@ -120,7 +134,7 @@ export default function OptimizedImage({
           {/* Actual image */}
           <motion.img
             ref={imgRef}
-            src={src}
+            src={imageSrc}
             alt={alt}
             className={`transition-opacity duration-300 ${
               isLoaded ? 'opacity-100' : 'opacity-0'

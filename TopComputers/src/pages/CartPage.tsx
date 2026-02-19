@@ -87,7 +87,7 @@ export default function CartPage() {
                 <div className="space-y-6">
                   {cart.items.map((item) => (
                     <motion.div
-                      key={item.productId}
+                      key={`${item.productId}_${item.selectedVariant?.id || 'default'}`}
                       layout
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -102,15 +102,20 @@ export default function CartPage() {
                       
                       <div className="flex-1">
                         <h3 className="font-semibold text-gray-900 dark:text-white">{item.productTitle}</h3>
+                        {item.selectedVariant && (
+                          <p className="text-sm text-blue-600 dark:text-orange-400 font-medium">
+                            Size: {item.selectedVariant.name}
+                          </p>
+                        )}
                         <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
-                          ${item.price} each
+                          {item.priceText || item.price}$ each
                         </p>
                       </div>
                       
                       {/* Quantity Controls */}
                       <div className="flex items-center space-x-3">
                         <button
-                          onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                          onClick={() => updateQuantity(item.productId, item.quantity - 1, item.selectedVariant?.id)}
                           className="p-1.5 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-all duration-200 font-bold"
                         >
                           <Minus className="h-4 w-4" />
@@ -119,7 +124,7 @@ export default function CartPage() {
                         <span className="w-12 text-center font-bold text-gray-900 dark:text-white">{item.quantity}</span>
                         
                         <button
-                          onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                          onClick={() => updateQuantity(item.productId, item.quantity + 1, item.selectedVariant?.id)}
                           className="p-1.5 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-all duration-200 font-bold"
                         >
                           <Plus className="h-4 w-4" />
@@ -129,10 +134,10 @@ export default function CartPage() {
                       {/* Total Price */}
                       <div className="text-right">
                         <p className="font-bold text-gray-900 dark:text-white">
-                          ${item.totalPrice.toFixed(2)}
+                          {item.priceText || item.price}$
                         </p>
                         <button
-                          onClick={() => removeFromCart(item.productId)}
+                          onClick={() => removeFromCart(item.productId, item.selectedVariant?.id)}
                           className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-sm mt-1 font-medium"
                         >
                           Remove

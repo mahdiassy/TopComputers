@@ -153,8 +153,10 @@ function FeaturedProductCard({ product }: { product: Product }) {
   const { addToCart } = useCart();
   const [hasImage, setHasImage] = useState(true);
 
-  const discountPercentage = product.salePrice 
-    ? Math.round(((product.price - product.salePrice) / product.price) * 100)
+  const priceNum = typeof product.price === 'string' ? parseFloat(product.price) || 0 : product.price;
+  const salePriceNum = product.salePrice ? (typeof product.salePrice === 'string' ? parseFloat(product.salePrice as string) || 0 : product.salePrice) : 0;
+  const discountPercentage = salePriceNum && priceNum > 0
+    ? Math.round(((priceNum - salePriceNum) / priceNum) * 100)
     : 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -220,15 +222,15 @@ function FeaturedProductCard({ product }: { product: Product }) {
               {product.salePrice ? (
                 <>
                   <span className="text-xl font-bold text-red-600 dark:text-red-400">
-                    ${product.salePrice}
+                    {product.salePrice}$
                   </span>
                   <span className="text-lg text-gray-500 dark:text-gray-400 line-through">
-                    ${product.price}
+                    {product.price}$
                   </span>
                 </>
               ) : (
                 <span className="text-xl font-bold text-gray-900 dark:text-white">
-                  ${product.price}
+                  {product.price}$
                 </span>
               )}
             </div>

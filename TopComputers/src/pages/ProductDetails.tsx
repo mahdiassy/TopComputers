@@ -19,6 +19,14 @@ import { useCart } from '../contexts/CartContext';
 import ProductImageGallery from '../components/ProductImageGallery';
 import WhatsAppOrderForm from '../components/WhatsAppOrderForm';
 import CartAnimation from '../components/CartAnimation';
+
+// Product variant for sizes with different prices
+interface ProductVariant {
+  id: string;
+  name: string;
+  price: string;
+}
+
 // Local Product interface to avoid Vite module resolution issues
 interface Product {
   id: string;
@@ -27,8 +35,8 @@ interface Product {
   categoryId: string;
   brandId?: string; // Optional - products can exist without a brand
   sku: string;
-  price: number;
-  salePrice?: number;
+  price: string | number;
+  salePrice?: string | number;
   currency: string;
   stock: number;
   status: 'active' | 'inactive' | 'archived';
@@ -37,6 +45,7 @@ interface Product {
   images: string[];
   thumbnail: string;
   description?: string;
+  variants?: ProductVariant[]; // Size variants with prices
   createdAt: Date;
   updatedAt: Date;
 }
@@ -56,6 +65,10 @@ export default function ProductDetails() {
   const [showCartAnimation, setShowCartAnimation] = useState(false);
   const [showCartFeedback, setShowCartFeedback] = useState(false);
   const [isButtonPressed, setIsButtonPressed] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+
+  // Get the display price based on selected variant
+  const displayPrice = selectedVariant ? selectedVariant.price : (product?.salePrice || product?.price || '');
 
   const handleShare = () => {
     setShowShareModal(true);
@@ -91,7 +104,12 @@ export default function ProductDetails() {
   // Add to cart functionality
   const handleAddToCart = () => {
     if (!product) return;
-    addToCart(product, quantity);
+    // If product has variants and none selected, show error
+    if (product.variants && product.variants.length > 0 && !selectedVariant) {
+      alert('Please select a size first');
+      return;
+    }
+    addToCart(product, quantity, selectedVariant || undefined);
     setShowCartAnimation(true);
     setShowCartFeedback(true);
     setIsButtonPressed(true);
@@ -214,19 +232,48 @@ export default function ProductDetails() {
               </div>
             )}
 
+            {/* Size Variants */}
+            {product.variants && product.variants.length > 0 && (
+              <div className="space-y-3">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Select Size *
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {product.variants.map((variant) => (
+                    <button
+                      key={variant.id}
+                      type="button"
+                      onClick={() => setSelectedVariant(variant)}
+                      className={`px-4 py-3 rounded-lg border-2 transition-all duration-200 ${
+                        selectedVariant?.id === variant.id
+                          ? 'border-blue-600 dark:border-orange-500 bg-blue-50 dark:bg-orange-500/20 text-blue-700 dark:text-orange-400'
+                          : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-orange-400 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                      }`}
+                    >
+                      <div className="text-sm font-medium">{variant.name}</div>
+                      <div className="text-xs font-bold text-blue-600 dark:text-orange-400">{variant.price}$</div>
+                    </button>
+                  ))}
+                </div>
+                {!selectedVariant && (
+                  <p className="text-sm text-orange-600 dark:text-orange-400">Please select a size to add to cart</p>
+                )}
+              </div>
+            )}
+
             {/* Price */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 flex-wrap gap-2">
               <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                ${product.salePrice || product.price}
+                {displayPrice}$
               </span>
-              {product.salePrice && (
+              {!selectedVariant && product.salePrice && (
                 <span className="text-xl text-gray-500 dark:text-gray-400 line-through">
-                  ${product.price}
+                  {product.price}$
                 </span>
               )}
-              {product.salePrice && (
+              {!selectedVariant && product.salePrice && (
                 <span className="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 text-sm font-medium px-3 py-1 rounded-full shadow-sm">
-                  Save ${(product.price - product.salePrice).toFixed(2)}
+                  Sale
                 </span>
               )}
             </div>
@@ -392,7 +439,7 @@ export default function ProductDetails() {
             {selectedTab === 'description' && (
               <div className="prose dark:prose-invert max-w-none">
                 {product.description ? (
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
                     {product.description}
                   </p>
                 ) : (

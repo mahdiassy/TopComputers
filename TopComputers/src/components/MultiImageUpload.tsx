@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import { Upload, X, Plus, AlertCircle } from 'lucide-react';
 import { useCatalog } from '../contexts/CatalogContext';
 import { ImageOptimizer } from '../utils/imageOptimization';
+import { ImageComposition } from '../utils/imageComposition';
 import toast from 'react-hot-toast';
 
 interface MultiImageUploadProps {
@@ -10,6 +11,7 @@ interface MultiImageUploadProps {
   onImagesChange: (images: string[]) => void;
   maxImages?: number;
   className?: string;
+  showDefaultBackground?: boolean; // Show default background for empty slots
 }
 
 interface ImagePreview {
@@ -25,7 +27,8 @@ export default function MultiImageUpload({
   existingImages = [],
   onImagesChange,
   maxImages = 10,
-  className
+  className,
+  showDefaultBackground = true // Default to true
 }: MultiImageUploadProps) {
   const [images, setImages] = useState<ImagePreview[]>(() => 
     existingImages.map((url, index) => ({
@@ -311,6 +314,12 @@ export default function MultiImageUpload({
                     src={image.url}
                     alt={`Product image ${index + 1}`}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback to default background if image fails to load
+                      if (showDefaultBackground) {
+                        e.currentTarget.src = ImageComposition.getDefaultBackgroundUrl();
+                      }
+                    }}
                   />
                 )}
               </div>
